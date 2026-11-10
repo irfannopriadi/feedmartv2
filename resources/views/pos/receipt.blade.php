@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struk Pembayaran #{{ $transaction->invoice_number }}</title>
+    <style>
+        @page {
+            margin: 0;
+            size: 58mm auto; /* Default thermal printer width */
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace, monospace;
+            font-size: 11px;
+            color: #000;
+            background: #fff;
+            margin: 0;
+            padding: 8px;
+            width: 54mm;
+            box-sizing: border-box;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .font-bold { font-weight: bold; }
+        .border-t { border-top: 1px dashed #000; margin-top: 5px; padding-top: 5px; }
+        .border-b { border-bottom: 1px dashed #000; margin-bottom: 5px; padding-bottom: 5px; }
+        .table-items { width: 100%; border-collapse: collapse; margin: 4px 0; }
+        .table-items td { vertical-align: top; padding: 2px 0; }
+        .no-print {
+            margin-bottom: 12px;
+            padding: 6px;
+            background: #f1f5f9;
+            text-align: center;
+        }
+        @media print {
+            .no-print { display: none; }
+            body { padding: 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button onclick="window.print()" style="padding: 4px 10px; cursor: pointer; font-weight: bold;">🖨 CETAK STRUK</button>
+        <button onclick="window.close()" style="padding: 4px 10px; cursor: pointer; margin-left: 4px;">TUTUP</button>
+    </div>
+
+    <!-- Store Header -->
+    <div class="text-center">
+        <div class="font-bold" style="font-size: 14px;">FEEDMART</div>
+        <div style="font-size: 9px;">Pusat Pakan Ternak & Hobi</div>
+        <div style="font-size: 9px;">Jl. Raya Peternakan No. 88</div>
+        <div style="font-size: 9px;">Telp/WA: 0812-3456-7890</div>
+    </div>
+
+    <div class="border-t border-b" style="font-size: 10px;">
+        <div>No: {{ $transaction->invoice_number }}</div>
+        <div>Tgl: {{ $transaction->created_at->format('d/m/Y H:i') }}</div>
+        <div>Kasir: {{ $transaction->user->name }}</div>
+    </div>
+
+    <!-- Itemized List -->
+    <table class="table-items">
+        @foreach($transaction->details as $item)
+            <tr>
+                <td colspan="2" class="font-bold">{{ $item->product->name }}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 10px;">
+                    {{ number_format($item->qty, 2, ',', '.') }} {{ $item->product->unit }} x {{ number_format($item->selling_price, 0, ',', '.') }}
+                </td>
+                <td class="text-right font-bold" style="font-size: 10px;">
+                    {{ number_format($item->subtotal, 0, ',', '.') }}
+                </td>
+            </tr>
+        @endforeach
+    </table>
+
+    <!-- Totals -->
+    <div class="border-t" style="font-size: 10px;">
+        <table style="width: 100%;">
+            <tr>
+                <td>Subtotal</td>
+                <td class="text-right">Rp {{ number_format($transaction->subtotal, 0, ',', '.') }}</td>
+            </tr>
+            @if($transaction->discount > 0)
+                <tr>
+                    <td>Diskon</td>
+                    <td class="text-right">- Rp {{ number_format($transaction->discount, 0, ',', '.') }}</td>
+                </tr>
+            @endif
+            <tr class="font-bold" style="font-size: 11px;">
+                <td>TOTAL</td>
+                <td class="text-right">Rp {{ number_format($transaction->final_amount, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border-top: 1px dotted #888;"></td>
+            </tr>
+            <tr>
+                <td>Bayar ({{ strtoupper($transaction->payment_method) }})</td>
+                <td class="text-right">Rp {{ number_format($transaction->paid_amount, 0, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <td>Kembali</td>
+                <td class="text-right">Rp {{ number_format($transaction->change_amount, 0, ',', '.') }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Footer Message -->
+    <div class="text-center border-t" style="font-size: 9px; margin-top: 8px;">
+        <div>*** TERIMA KASIH ***</div>
+        <div>Barang yang dibeli tidak dapat ditukar/dikembalikan</div>
+    </div>
+
+    <script>
+        // Auto trigger print when loaded
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 300);
+        };
+    </script>
+</body>
+</html>
