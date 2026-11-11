@@ -69,8 +69,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Audit Mutasi & Stock Opname
     Route::get('/stock-opname', [StockOpnameController::class, 'index'])->name('stock-opname.index');
+    Route::get('/stock-opname/excel', [StockOpnameController::class, 'exportExcel'])->name('stock-opname.excel');
     Route::post('/stock-opname/adjust', [StockOpnameController::class, 'adjust'])->name('stock-opname.adjust');
 
     // Laporan Penjualan & Laba Rugi
     Route::get('/reports/sales', [ReportController::class, 'sales'])->name('reports.sales');
+    Route::get('/reports/sales/excel', [ReportController::class, 'exportExcel'])->name('reports.sales.excel');
+    Route::get('/reports/sales/pdf', [ReportController::class, 'exportPdf'])->name('reports.sales.pdf');
 });

@@ -39,12 +39,17 @@
             </div>
 
             <div class="flex items-end gap-2">
-                <button type="submit" class="flex-1 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-xs">
+                <button type="submit" class="flex-1 py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition shadow-xs">
                     Terapkan Filter
                 </button>
-                <button type="button" onclick="window.print()" class="py-2 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition" title="Cetak Laporan">
-                    🖨
-                </button>
+                <a href="{{ route('admin.reports.sales.excel', request()->all()) }}" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-xs flex items-center gap-1" title="Unduh File Excel">
+                    <span>📊</span>
+                    <span class="hidden sm:inline">Excel</span>
+                </a>
+                <a href="{{ route('admin.reports.sales.pdf', request()->all()) }}" target="_blank" class="py-2 px-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition shadow-xs flex items-center gap-1" title="Cetak / Simpan PDF">
+                    <span>📄</span>
+                    <span class="hidden sm:inline">PDF</span>
+                </a>
             </div>
         </form>
     </div>

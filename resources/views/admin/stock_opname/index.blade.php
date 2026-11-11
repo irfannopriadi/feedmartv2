@@ -96,6 +96,10 @@
 
                 <input type="date" name="date_from" value="{{ request('date_from') }}" onchange="this.form.submit()" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700">
                 <input type="date" name="date_to" value="{{ request('date_to') }}" onchange="this.form.submit()" class="px-2.5 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-700">
+                <a href="{{ route('admin.stock-opname.excel', request()->all()) }}" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs" title="Unduh Jurnal Mutasi ke Excel">
+                    <span>📊</span>
+                    <span>Ekspor Excel</span>
+                </a>
             </form>
         </div>
 

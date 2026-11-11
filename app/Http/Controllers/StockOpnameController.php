@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\StockMutation;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class StockOpnameController extends Controller
 {
@@ -77,5 +79,87 @@ class StockOpnameController extends Controller
         } catch (Exception $e) {
             return back()->with('error', $e->getMessage())->withInput();
         }
+    }
+
+    /**
+     * Ekspor Log Audit Mutasi Stok ke Excel (.csv UTF-8 BOM).
+     */
+    public function exportExcel(Request $request): StreamedResponse
+    {
+        $query = StockMutation::with(['product', 'user']);
+
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('product_id')) {
+            $query->where('product_id', $request->product_id);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $mutations = $query->orderBy('created_at')->get();
+
+        $filename = 'Jurnal-Mutasi-Stok-Feedmart-'.Carbon::now()->format('Ymd-His').'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0',
+        ];
+
+        return response()->stream(function () use ($mutations) {
+            $handle = fopen('php://output', 'w');
+
+            // BOM UTF-8 & sep=, untuk Microsoft Excel
+            fwrite($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+            fputcsv($handle, ['sep=,']);
+
+            // Header Dokumen
+            fputcsv($handle, ['JURNAL AUDIT MUTASI INVENTARIS & STOK OPNAME - FEEDMART']);
+            fputcsv($handle, ['Tanggal Unduh:', Carbon::now()->format('d/m/Y H:i:s')]);
+            fputcsv($handle, ['Total Catatan Mutasi:', $mutations->count()]);
+            fputcsv($handle, []);
+
+            // Baris Judul Kolom
+            fputcsv($handle, [
+                'No',
+                'Tanggal & Waktu',
+                'Nama Pengguna / Operator',
+                'Tipe Mutasi',
+                'Nama Produk Pakan',
+                'Satuan',
+                'Stok Awal',
+                'Jumlah Perubahan (+/-)',
+                'Stok Akhir',
+                'Catatan / Keterangan Audit',
+            ]);
+
+            $no = 1;
+            foreach ($mutations as $m) {
+                fputcsv($handle, [
+                    $no++,
+                    $m->created_at->format('Y-m-d H:i:s'),
+                    $m->user?->name ?? '-',
+                    $m->type,
+                    $m->product?->name ?? '-',
+                    $m->product?->unit ?? '-',
+                    (float) $m->qty_before,
+                    (float) $m->qty_change,
+                    (float) $m->qty_after,
+                    $m->notes ?? '',
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
     }
 }
