@@ -28,9 +28,30 @@
         .table-items td { vertical-align: top; padding: 2px 0; }
         .no-print {
             margin-bottom: 12px;
-            padding: 6px;
-            background: #f1f5f9;
+            padding: 8px;
+            background: #f4f4f0;
+            border: 2px solid #000;
+            box-shadow: 3px 3px 0px #000;
             text-align: center;
+        }
+        .no-print button {
+            border: 2px solid #000;
+            padding: 5px 12px;
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 11px;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0px #000;
+            transition: all 0.1s;
+        }
+        .btn-print {
+            background: #34d399;
+            color: #000;
+        }
+        .btn-close {
+            background: #fff;
+            color: #000;
+            margin-left: 4px;
         }
         @media print {
             .no-print { display: none; }
@@ -40,14 +61,14 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()" style="padding: 4px 10px; cursor: pointer; font-weight: bold;">🖨 CETAK STRUK</button>
-        <button onclick="window.close()" style="padding: 4px 10px; cursor: pointer; margin-left: 4px;">TUTUP</button>
+        <button class="btn-print" onclick="window.print()">🖨 CETAK STRUK</button>
+        <button class="btn-close" onclick="window.close()">TUTUP</button>
     </div>
 
     <!-- Store Header -->
     <div class="text-center">
-        <div class="font-bold" style="font-size: 14px;">FEEDMART</div>
-        <div style="font-size: 9px;">Pusat Pakan Ternak & Hobi</div>
+        <div class="font-bold" style="font-size: 14px; letter-spacing: 1px;">FEEDMART</div>
+        <div style="font-size: 9px; font-weight: bold;">PUSAT PAKAN TERNAK & HOBI</div>
         <div style="font-size: 9px;">Jl. Raya Peternakan No. 88</div>
         <div style="font-size: 9px;">Telp/WA: 0812-3456-7890</div>
     </div>
@@ -93,7 +114,7 @@
                 <td class="text-right">Rp {{ number_format($transaction->final_amount, 0, ',', '.') }}</td>
             </tr>
             <tr>
-                <td colspan="2" style="border-top: 1px dotted #888;"></td>
+                <td colspan="2" style="border-top: 1px dotted #000;"></td>
             </tr>
             <tr>
                 <td>Bayar ({{ strtoupper($transaction->payment_method) }})</td>

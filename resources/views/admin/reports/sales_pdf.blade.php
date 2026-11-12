@@ -19,20 +19,21 @@
         }
         .header-table {
             width: 100%;
-            border-bottom: 2px solid #0f172a;
+            border-bottom: 3px solid #000;
             padding-bottom: 10px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
         .brand-title {
             font-size: 20px;
             font-weight: 900;
-            color: #065f46;
-            letter-spacing: 0.5px;
+            color: #000;
+            letter-spacing: 1px;
         }
         .brand-sub {
             font-size: 10px;
-            color: #64748b;
+            color: #333;
             margin-top: 2px;
+            font-weight: bold;
         }
         .report-title {
             text-align: right;
@@ -40,14 +41,15 @@
         .report-title h2 {
             margin: 0;
             font-size: 16px;
-            color: #0f172a;
-            font-weight: 800;
+            color: #000;
+            font-weight: 900;
             text-transform: uppercase;
         }
         .report-title p {
             margin: 3px 0 0;
             font-size: 10px;
-            color: #475569;
+            color: #333;
+            font-weight: bold;
         }
         /* Summary Box */
         .summary-grid {
@@ -59,9 +61,8 @@
             display: table-cell;
             width: 20%;
             padding: 8px 10px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            background: #fff;
+            border: 2px solid #000;
         }
         .summary-cell + .summary-cell {
             border-left: none;
@@ -69,19 +70,20 @@
         .summary-label {
             font-size: 9px;
             text-transform: uppercase;
-            font-weight: bold;
-            color: #64748b;
+            font-weight: 900;
+            color: #555;
             display: block;
         }
         .summary-val {
             font-size: 13px;
             font-weight: 900;
-            color: #0f172a;
+            color: #000;
             margin-top: 3px;
             display: block;
+            font-family: monospace;
         }
         .highlight-profit {
-            color: #047857;
+            color: #000;
         }
         /* Data Table */
         table.data-table {
@@ -90,22 +92,22 @@
             font-size: 10px;
         }
         table.data-table th {
-            background-color: #0f172a;
+            background-color: #000000;
             color: #ffffff;
-            font-weight: bold;
+            font-weight: 900;
             text-align: left;
             padding: 6px 8px;
-            border: 1px solid #0f172a;
+            border: 1px solid #000000;
             text-transform: uppercase;
             font-size: 9px;
         }
         table.data-table td {
             padding: 5px 8px;
-            border: 1px solid #cbd5e1;
+            border: 1px solid #000;
             vertical-align: top;
         }
         table.data-table tr:nth-child(even) {
-            background-color: #f8fafc;
+            background-color: #fafaf8;
         }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
@@ -126,34 +128,38 @@
         }
         /* Print actions */
         .no-print-bar {
-            background: #0f172a;
-            color: #fff;
+            background: #f4f4f0;
+            color: #000;
             padding: 8px 16px;
             margin-bottom: 15px;
-            border-radius: 8px;
+            border: 2px solid #000;
+            box-shadow: 4px 4px 0px #000;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
         .btn-print {
-            background: #10b981;
-            color: #fff;
-            border: none;
+            background: #34d399;
+            color: #000;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
             padding: 6px 14px;
-            font-weight: bold;
-            border-radius: 6px;
+            font-weight: 900;
             cursor: pointer;
             font-size: 11px;
+            text-transform: uppercase;
         }
         .btn-close {
-            background: #334155;
-            color: #fff;
-            border: none;
+            background: #fff;
+            color: #000;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0px #000;
             padding: 6px 14px;
-            border-radius: 6px;
+            font-weight: 900;
             cursor: pointer;
             margin-left: 6px;
             font-size: 11px;
+            text-transform: uppercase;
         }
         @media print {
             .no-print-bar {

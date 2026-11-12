@@ -9,6 +9,7 @@ use App\Http\Controllers\RepackController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StockInController;
 use App\Http\Controllers\StockOpnameController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect Home
@@ -58,6 +59,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     // Master Produk & Kategori
     Route::resource('products', ProductController::class)->except(['show', 'destroy']);
     Route::patch('/products/{product}/toggle', [ProductController::class, 'toggleActive'])->name('products.toggle');
+
+    // Master Supplier / Distributor
+    Route::resource('suppliers', SupplierController::class)->except(['show']);
 
     // Repack Karung -> Eceran
     Route::get('/repack', [RepackController::class, 'index'])->name('repack.index');

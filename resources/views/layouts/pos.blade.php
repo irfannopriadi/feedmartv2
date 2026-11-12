@@ -8,57 +8,58 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
         [x-cloak] { display: none !important; }
-        /* Custom scrollbar for fast cashier scanning */
+        /* Neo-brutalist scrollbar */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: #f1f1eb;
+            border-left: 2px solid #000;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
+            background: #000;
+            border-radius: 0;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #333;
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans antialiased h-screen overflow-hidden flex flex-col">
-    <!-- Top Cashier Header -->
-    <header class="bg-slate-900 text-white h-14 px-4 flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+<body class="bg-[#F8F8F5] text-black font-sans antialiased h-screen overflow-hidden flex flex-col selection:bg-yellow-300 selection:text-black">
+    <!-- Top Cashier Header (Neo-Brutalist Minimalism) -->
+    <header class="bg-black text-white h-14 px-4 flex items-center justify-between border-b-2 border-black flex-shrink-0 z-20">
         <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white shadow">
+            <div class="w-8 h-8 rounded-lg bg-emerald-400 text-black border-2 border-white flex items-center justify-center font-black text-base shadow-[2px_2px_0px_#fff]">
                 🌾
             </div>
-            <div>
-                <span class="font-bold text-sm tracking-wide">FEEDMART POS</span>
-                <span class="text-[10px] text-emerald-400 font-medium ml-1.5 px-1.5 py-0.5 rounded bg-emerald-950 border border-emerald-800">
-                    Shift Aktif #{{ $activeRegister?->id ?? '-' }}
+            <div class="flex items-center gap-2">
+                <span class="font-black text-sm tracking-wider text-white">FEEDMART POS</span>
+                <span class="text-[10px] text-black font-black px-2 py-0.5 rounded bg-yellow-300 border border-black shadow-[1.5px_1.5px_0px_#fff]">
+                    Shift #{{ $activeRegister?->id ?? '-' }}
                 </span>
             </div>
         </div>
 
-        <div class="flex items-center space-x-3 text-xs">
-            <div class="hidden sm:flex items-center space-x-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
-                <span class="text-slate-400">Kasir:</span>
-                <span class="font-bold text-emerald-300">{{ auth()->user()->name }}</span>
+        <div class="flex items-center space-x-2.5 text-xs">
+            <div class="hidden sm:flex items-center space-x-1.5 bg-zinc-900 px-3 py-1 rounded-md border border-zinc-700">
+                <span class="text-zinc-400 font-bold">Kasir:</span>
+                <span class="font-black text-emerald-300">{{ auth()->user()->name }}</span>
             </div>
             
             @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.dashboard') }}" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg transition font-medium border border-slate-700">
+                <a href="{{ route('admin.dashboard') }}" class="neo-btn px-2.5 py-1 bg-white hover:bg-zinc-200 text-black text-xs font-black">
                     ← Admin Panel
                 </a>
             @endif
 
-            <a href="{{ route('cash-register.close-form') }}" class="px-2.5 py-1.5 bg-amber-600/90 hover:bg-amber-600 text-white rounded-lg transition font-medium shadow-xs">
+            <a href="{{ route('cash-register.close-form') }}" class="neo-btn px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-black text-xs font-black">
                 Tutup Shift
             </a>
 
             <form method="POST" action="{{ route('logout') }}" class="inline">
                 @csrf
-                <button type="submit" class="px-2.5 py-1.5 bg-rose-700/80 hover:bg-rose-700 text-white rounded-lg transition font-medium">
+                <button type="submit" class="neo-btn px-2.5 py-1 bg-rose-400 hover:bg-rose-300 text-black text-xs font-black">
                     Keluar
                 </button>
             </form>

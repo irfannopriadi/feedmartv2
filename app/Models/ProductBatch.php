@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,15 @@ class ProductBatch extends Model
             'expired_date' => 'date',
             'stock_in_batch' => 'decimal:2',
         ];
+    }
+
+    public function getDaysLeftAttribute(): int
+    {
+        if (! $this->expired_date) {
+            return 0;
+        }
+
+        return (int) Carbon::now()->startOfDay()->diffInDays(Carbon::parse($this->expired_date)->startOfDay(), false);
     }
 
     public function product(): BelongsTo

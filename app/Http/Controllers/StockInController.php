@@ -32,6 +32,8 @@ class StockInController extends Controller
     {
         $request->validate([
             'product_id' => ['required', 'exists:products,id'],
+            'supplier_id' => ['nullable', 'exists:suppliers,id'],
+            'new_supplier_name' => ['nullable', 'string', 'max:255'],
             'qty' => ['required', 'numeric', 'min:0.01'],
             'cost_price' => ['nullable', 'numeric', 'min:0'],
             'batch_number' => ['nullable', 'string', 'max:100'],
@@ -52,6 +54,18 @@ class StockInController extends Controller
                 if ($request->filled('cost_price') && (float) $request->cost_price > 0) {
                     $updateData['cost_price'] = (float) $request->cost_price;
                 }
+
+                $supplierName = null;
+                if ($request->filled('new_supplier_name')) {
+                    $supplier = Supplier::firstOrCreate(['name' => trim($request->new_supplier_name)]);
+                    $updateData['supplier_id'] = $supplier->id;
+                    $supplierName = $supplier->name;
+                } elseif ($request->filled('supplier_id')) {
+                    $updateData['supplier_id'] = $request->supplier_id;
+                    $supplier = Supplier::find($request->supplier_id);
+                    $supplierName = $supplier?->name;
+                }
+
                 $product->update($updateData);
 
                 // Buat Batch Kedaluwarsa Baru
@@ -64,6 +78,7 @@ class StockInController extends Controller
                 ]);
 
                 // Catat Log Mutasi
+                $supplierNote = $supplierName ? " dari {$supplierName}" : '';
                 StockMutation::create([
                     'product_id' => $product->id,
                     'user_id' => Auth::id(),
@@ -71,7 +86,7 @@ class StockInController extends Controller
                     'qty_change' => $qty,
                     'qty_before' => $stockBefore,
                     'qty_after' => $stockAfter,
-                    'notes' => 'Faktur/Ref: '.($request->invoice_ref ?: '-').'. '.($request->notes ?: 'Penerimaan stok dari supplier')." [Exp: {$request->expired_date}]",
+                    'notes' => 'Faktur/Ref: '.($request->invoice_ref ?: '-').'. '.($request->notes ?: "Penerimaan stok{$supplierNote}")." [Exp: {$request->expired_date}]",
                 ]);
             });
 

@@ -65,6 +65,7 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'animal_category_id' => ['nullable', 'exists:animal_categories,id'],
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
+            'new_supplier_name' => ['nullable', 'string', 'max:255'],
             'unit' => ['required', 'string', 'max:50'],
             'is_repack' => ['nullable', 'boolean'],
             'parent_product_id' => ['nullable', 'required_if:is_repack,1', 'exists:products,id'],
@@ -77,9 +78,15 @@ class ProductController extends Controller
             'initial_expired_date' => ['nullable', 'date'],
         ]);
 
+        if ($request->filled('new_supplier_name')) {
+            $supplier = Supplier::firstOrCreate(['name' => trim($request->new_supplier_name)]);
+            $validated['supplier_id'] = $supplier->id;
+        }
+
         $validated['is_repack'] = $request->boolean('is_repack');
         $validated['stock'] = $validated['stock'] ?? 0;
         $validated['min_stock_alert'] = $validated['min_stock_alert'] ?? 5;
+        unset($validated['new_supplier_name']);
 
         $product = Product::create($validated);
 
@@ -116,6 +123,7 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'animal_category_id' => ['nullable', 'exists:animal_categories,id'],
             'supplier_id' => ['nullable', 'exists:suppliers,id'],
+            'new_supplier_name' => ['nullable', 'string', 'max:255'],
             'unit' => ['required', 'string', 'max:50'],
             'is_repack' => ['nullable', 'boolean'],
             'parent_product_id' => ['nullable', 'required_if:is_repack,1', 'exists:products,id'],
@@ -126,8 +134,14 @@ class ProductController extends Controller
             'is_active' => ['nullable', 'boolean'],
         ]);
 
+        if ($request->filled('new_supplier_name')) {
+            $supplier = Supplier::firstOrCreate(['name' => trim($request->new_supplier_name)]);
+            $validated['supplier_id'] = $supplier->id;
+        }
+
         $validated['is_repack'] = $request->boolean('is_repack');
         $validated['is_active'] = $request->boolean('is_active');
+        unset($validated['new_supplier_name']);
 
         $product->update($validated);
 
