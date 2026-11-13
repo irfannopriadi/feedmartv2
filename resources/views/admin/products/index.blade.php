@@ -33,6 +33,9 @@
         </form>
 
         <div class="w-full md:w-auto flex items-center gap-2">
+            <a href="{{ route('admin.barcode.index') }}" class="neo-btn w-full md:w-auto px-4 py-2 bg-yellow-300 hover:bg-yellow-200 text-black text-xs font-black shadow-[3px_3px_0px_#000]">
+                <span>🏷️ Cetak Barcode</span>
+            </a>
             <a href="{{ route('admin.products.create') }}" class="neo-btn w-full md:w-auto px-4 py-2 bg-emerald-400 hover:bg-emerald-300 text-black text-xs font-black shadow-[3px_3px_0px_#000]">
                 <span>+ Tambah Produk Pakan</span>
             </a>
@@ -109,6 +112,9 @@
                             </td>
                             <td class="p-3.5 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
+                                    <a href="{{ route('admin.barcode.index', ['product_id' => $p->id]) }}" class="neo-btn p-1.5 bg-cyan-200 hover:bg-cyan-300 text-black text-xs" title="Cetak Barcode">
+                                        🏷️
+                                    </a>
                                     <a href="{{ route('admin.products.edit', $p->id) }}" class="neo-btn p-1.5 bg-yellow-200 hover:bg-yellow-300 text-black text-xs" title="Edit Data">
                                         ✏️
                                     </a>

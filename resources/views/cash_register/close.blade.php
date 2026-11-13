@@ -27,22 +27,28 @@
 
         <!-- Metrics Comparison -->
         <div class="p-6 border-b-2 border-black bg-zinc-50">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div class="p-4 bg-white border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div class="p-3 bg-white border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
                     <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Modal Awal</span>
-                    <span class="text-base font-black font-mono text-black mt-1 block">
+                    <span class="text-sm font-black font-mono text-black mt-1 block">
                         Rp {{ number_format($register->opening_cash, 0, ',', '.') }}
                     </span>
                 </div>
-                <div class="p-4 bg-emerald-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
+                <div class="p-3 bg-emerald-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
                     <span class="text-[10px] font-black text-zinc-700 uppercase tracking-widest block">+ Penjualan Tunai</span>
-                    <span class="text-base font-black font-mono text-black mt-1 block">
+                    <span class="text-sm font-black font-mono text-black mt-1 block">
                         Rp {{ number_format($cashSales, 0, ',', '.') }}
                     </span>
                 </div>
-                <div class="p-4 bg-sky-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
+                <div class="p-3 bg-rose-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
+                    <span class="text-[10px] font-black text-rose-700 uppercase tracking-widest block">- Kas Keluar Shift</span>
+                    <span class="text-sm font-black font-mono text-rose-700 mt-1 block">
+                        Rp {{ number_format($cashExpenses ?? 0, 0, ',', '.') }}
+                    </span>
+                </div>
+                <div class="p-3 bg-sky-100 border-2 border-black rounded-xl shadow-[3px_3px_0px_#000]">
                     <span class="text-[10px] font-black text-zinc-700 uppercase tracking-widest block">Non-Tunai (QRIS/TF)</span>
-                    <span class="text-base font-black font-mono text-black mt-1 block">
+                    <span class="text-sm font-black font-mono text-black mt-1 block">
                         Rp {{ number_format($nonCashSales, 0, ',', '.') }}
                     </span>
                 </div>
@@ -52,7 +58,7 @@
             <div class="mt-4 p-4 rounded-xl bg-yellow-200 border-2 border-black flex items-center justify-between shadow-[3px_3px_0px_#000]">
                 <div>
                     <span class="text-xs font-black text-black uppercase tracking-wider block">Target Uang Kas Sistem di Laci:</span>
-                    <p class="text-[11px] font-bold text-zinc-700">Modal Awal + Total Penjualan Tunai</p>
+                    <p class="text-[11px] font-bold text-zinc-700">Modal Awal + Penjualan Tunai - Kas Keluar</p>
                 </div>
                 <div class="text-right">
                     <span class="text-xl font-black font-mono text-black">

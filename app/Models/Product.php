@@ -76,6 +76,11 @@ class Product extends Model
         return $this->hasMany(StockMutation::class);
     }
 
+    public function productReturns(): HasMany
+    {
+        return $this->hasMany(ProductReturn::class);
+    }
+
     public function isLowStock(): bool
     {
         return (float) $this->stock <= (float) $this->min_stock_alert;

@@ -15,12 +15,14 @@ class Transaction extends Model
         'invoice_number',
         'user_id',
         'cash_register_id',
+        'customer_id',
         'subtotal',
         'discount',
         'final_amount',
         'paid_amount',
         'change_amount',
         'payment_method',
+        'due_date',
         'status',
     ];
 
@@ -32,6 +34,7 @@ class Transaction extends Model
             'final_amount' => 'decimal:2',
             'paid_amount' => 'decimal:2',
             'change_amount' => 'decimal:2',
+            'due_date' => 'date',
         ];
     }
 
@@ -45,8 +48,18 @@ class Transaction extends Model
         return $this->belongsTo(CashRegister::class);
     }
 
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
     public function details(): HasMany
     {
         return $this->hasMany(TransactionDetail::class);
+    }
+
+    public function returns(): HasMany
+    {
+        return $this->hasMany(ProductReturn::class);
     }
 }

@@ -1,3 +1,8 @@
+@php
+    $settings = \App\Models\Setting::allKeyed();
+    $paperSize = $settings['receipt_paper_size'] ?? '58mm';
+    $paperWidth = $paperSize === '80mm' ? '76mm' : '54mm';
+@endphp
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,16 +12,16 @@
     <style>
         @page {
             margin: 0;
-            size: 58mm auto; /* Default thermal printer width */
+            size: {{ $paperSize }} auto;
         }
         body {
             font-family: 'Courier New', Courier, monospace, monospace;
-            font-size: 11px;
+            font-size: {{ $paperSize === '80mm' ? '12px' : '11px' }};
             color: #000;
             background: #fff;
-            margin: 0;
+            margin: 0 auto;
             padding: 8px;
-            width: 54mm;
+            width: {{ $paperWidth }};
             box-sizing: border-box;
         }
         .text-center { text-align: center; }
@@ -67,16 +72,23 @@
 
     <!-- Store Header -->
     <div class="text-center">
-        <div class="font-bold" style="font-size: 14px; letter-spacing: 1px;">FEEDMART</div>
-        <div style="font-size: 9px; font-weight: bold;">PUSAT PAKAN TERNAK & HOBI</div>
-        <div style="font-size: 9px;">Jl. Raya Peternakan No. 88</div>
-        <div style="font-size: 9px;">Telp/WA: 0812-3456-7890</div>
+        <div class="font-bold" style="font-size: {{ $paperSize === '80mm' ? '16px' : '14px' }}; letter-spacing: 1px;">
+            {{ $settings['store_name'] ?? 'FEEDMART' }}
+        </div>
+        @if(!empty($settings['store_tagline']))
+            <div style="font-size: 9px; font-weight: bold;">{{ $settings['store_tagline'] }}</div>
+        @endif
+        <div style="font-size: 9px;">{{ $settings['store_address'] ?? 'Jl. Raya Peternakan No. 88' }}</div>
+        <div style="font-size: 9px;">Telp/WA: {{ $settings['store_phone'] ?? '0812-3456-7890' }}</div>
     </div>
 
     <div class="border-t border-b" style="font-size: 10px;">
         <div>No: {{ $transaction->invoice_number }}</div>
         <div>Tgl: {{ $transaction->created_at->format('d/m/Y H:i') }}</div>
         <div>Kasir: {{ $transaction->user->name }}</div>
+        @if($transaction->customer)
+            <div class="font-bold">Pelanggan: {{ $transaction->customer->name }}</div>
+        @endif
     </div>
 
     <!-- Itemized List -->
@@ -120,21 +132,33 @@
                 <td>Bayar ({{ strtoupper($transaction->payment_method) }})</td>
                 <td class="text-right">Rp {{ number_format($transaction->paid_amount, 0, ',', '.') }}</td>
             </tr>
-            <tr>
-                <td>Kembali</td>
-                <td class="text-right">Rp {{ number_format($transaction->change_amount, 0, ',', '.') }}</td>
-            </tr>
+            @if($transaction->payment_method === 'tempo')
+                <tr class="font-bold" style="color: red;">
+                    <td>STATUS</td>
+                    <td class="text-right">KASBON / TEMPO</td>
+                </tr>
+                @if($transaction->due_date)
+                    <tr>
+                        <td>Jatuh Tempo</td>
+                        <td class="text-right">{{ $transaction->due_date->format('d/m/Y') }}</td>
+                    </tr>
+                @endif
+            @else
+                <tr>
+                    <td>Kembali</td>
+                    <td class="text-right">Rp {{ number_format($transaction->change_amount, 0, ',', '.') }}</td>
+                </tr>
+            @endif
         </table>
     </div>
 
     <!-- Footer Message -->
     <div class="text-center border-t" style="font-size: 9px; margin-top: 8px;">
         <div>*** TERIMA KASIH ***</div>
-        <div>Barang yang dibeli tidak dapat ditukar/dikembalikan</div>
+        <div>{{ $settings['receipt_footer'] ?? 'Barang yang dibeli tidak dapat ditukar/dikembalikan' }}</div>
     </div>
 
     <script>
-        // Auto trigger print when loaded
         window.onload = function() {
             setTimeout(function() {
                 window.print();

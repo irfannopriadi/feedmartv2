@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\Transaction;
 use App\Models\TransactionDetail;
 use App\Models\User;
@@ -37,6 +38,9 @@ class ReportController extends Controller
         $grossProfit = $totalSales - $totalHpp;
         $profitMargin = $totalSales > 0 ? ($grossProfit / $totalSales) * 100 : 0;
 
+        $totalExpenses = Expense::whereBetween('date', [$dateFrom, $dateTo])->sum('amount');
+        $netProfit = $grossProfit - $totalExpenses;
+
         $cashiers = User::where('role', 'kasir')->get();
 
         return view('admin.reports.sales', compact(
@@ -44,6 +48,8 @@ class ReportController extends Controller
             'totalSales',
             'totalHpp',
             'grossProfit',
+            'totalExpenses',
+            'netProfit',
             'profitMargin',
             'totalDiscount',
             'totalTransactionsCount',

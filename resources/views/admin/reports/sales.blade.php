@@ -53,37 +53,45 @@
     </div>
 
     <!-- Summary Metrics -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div class="neo-box p-4 flex flex-col justify-between">
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+        <div class="neo-box p-3.5 flex flex-col justify-between bg-white">
             <div>
-                <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Total Omzet Penjualan</span>
-                <span class="text-xl font-black font-mono text-black mt-1 block">Rp {{ number_format($totalSales, 0, ',', '.') }}</span>
+                <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">Total Omzet Penjualan</span>
+                <span class="text-base font-black font-mono text-black mt-1 block">Rp {{ number_format($totalSales, 0, ',', '.') }}</span>
             </div>
-            <span class="neo-badge bg-zinc-100 text-black mt-2 w-fit">{{ $totalTransactionsCount }} Transaksi</span>
+            <span class="neo-badge bg-zinc-100 text-black mt-2 w-fit text-[10px]">{{ $totalTransactionsCount }} Transaksi</span>
         </div>
 
-        <div class="neo-box p-4 flex flex-col justify-between">
+        <div class="neo-box p-3.5 flex flex-col justify-between bg-white">
             <div>
-                <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Total HPP Terjual</span>
-                <span class="text-xl font-black font-mono text-zinc-700 mt-1 block">Rp {{ number_format($totalHpp, 0, ',', '.') }}</span>
+                <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest block">Total HPP Modal Pakan</span>
+                <span class="text-base font-black font-mono text-zinc-700 mt-1 block">Rp {{ number_format($totalHpp, 0, ',', '.') }}</span>
             </div>
-            <span class="neo-badge bg-zinc-100 text-black mt-2 w-fit">Modal Pokok Pakan</span>
+            <span class="neo-badge bg-zinc-100 text-black mt-2 w-fit text-[10px]">HPP Pokok</span>
         </div>
 
-        <div class="neo-box p-4 flex flex-col justify-between">
+        <div class="neo-box p-3.5 flex flex-col justify-between bg-emerald-50">
             <div>
-                <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Laba Kotor (Gross Profit)</span>
-                <span class="text-xl font-black font-mono text-emerald-800 mt-1 block">Rp {{ number_format($grossProfit, 0, ',', '.') }}</span>
+                <span class="text-[9px] font-black text-emerald-800 uppercase tracking-widest block">Laba Kotor Penjualan</span>
+                <span class="text-base font-black font-mono text-emerald-800 mt-1 block">Rp {{ number_format($grossProfit, 0, ',', '.') }}</span>
             </div>
-            <span class="neo-badge bg-emerald-300 text-black mt-2 w-fit">Margin: {{ number_format($profitMargin, 1) }}%</span>
+            <span class="neo-badge bg-emerald-300 text-black mt-2 w-fit text-[10px]">Margin: {{ number_format($profitMargin, 1) }}%</span>
         </div>
 
-        <div class="neo-box p-4 flex flex-col justify-between">
+        <div class="neo-box p-3.5 flex flex-col justify-between bg-rose-50">
             <div>
-                <span class="text-[10px] font-black text-zinc-500 uppercase tracking-widest block">Total Diskon</span>
-                <span class="text-xl font-black font-mono text-amber-700 mt-1 block">Rp {{ number_format($totalDiscount, 0, ',', '.') }}</span>
+                <span class="text-[9px] font-black text-rose-800 uppercase tracking-widest block">Biaya Kas Operasional</span>
+                <span class="text-base font-black font-mono text-rose-700 mt-1 block">Rp {{ number_format($totalExpenses ?? 0, 0, ',', '.') }}</span>
             </div>
-            <span class="neo-badge bg-yellow-300 text-black mt-2 w-fit">Potongan Kasir</span>
+            <span class="neo-badge bg-rose-200 text-rose-900 mt-2 w-fit text-[10px]">Beban Toko</span>
+        </div>
+
+        <div class="neo-box p-3.5 flex flex-col justify-between bg-yellow-200">
+            <div>
+                <span class="text-[9px] font-black text-black uppercase tracking-widest block">Laba Bersih Nyata</span>
+                <span class="text-base font-black font-mono text-black mt-1 block">Rp {{ number_format($netProfit ?? $grossProfit, 0, ',', '.') }}</span>
+            </div>
+            <span class="neo-badge bg-black text-white mt-2 w-fit text-[10px]">Laba Kotor - Beban</span>
         </div>
     </div>
 

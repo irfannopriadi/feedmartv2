@@ -56,4 +56,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(StockMutation::class);
     }
+
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function productReturns(): HasMany
+    {
+        return $this->hasMany(ProductReturn::class);
+    }
+
+    public function customerDebtPayments(): HasMany
+    {
+        return $this->hasMany(CustomerDebtPayment::class);
+    }
 }

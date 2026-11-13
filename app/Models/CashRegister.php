@@ -43,13 +43,18 @@ class CashRegister extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
+    }
+
+    public function debtPayments(): HasMany
+    {
+        return $this->hasMany(CustomerDebtPayment::class);
+    }
+
     public function isOpen(): bool
     {
         return $this->status === 'open';
-    }
-
-    public function scopeOpen($query)
-    {
-        return $query->where('status', 'open');
     }
 }

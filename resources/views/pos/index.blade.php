@@ -21,9 +21,20 @@
                     class="neo-input pl-9 pr-4 py-2 text-xs font-bold">
             </div>
 
+            <!-- Sound Feedback Toggle -->
+            <button type="button" @click="toggleSound()" class="neo-btn px-2.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-black text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1 flex-shrink-0" :title="soundEnabled ? 'Matikan Suara Beep' : 'Aktifkan Suara Beep'">
+                <span x-text="soundEnabled ? '🔊' : '🔇'"></span>
+                <span class="hidden sm:inline text-[10px]" x-text="soundEnabled ? 'BEEP ON' : 'MUTE'"></span>
+            </button>
+
+            <!-- Quick Petty Cash / Expense -->
+            <button type="button" @click="showExpenseModal = true" class="neo-btn px-3 py-2 bg-rose-200 hover:bg-rose-300 text-black text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1 flex-shrink-0">
+                <span>💸 Kas Keluar</span>
+            </button>
+
             <!-- Recall Hold Bill Button -->
             <button type="button" @click="showHoldModal = true" class="neo-btn px-3 py-2 bg-yellow-300 hover:bg-yellow-200 text-black text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 flex-shrink-0">
-                <span>📋 Bill Tersimpan</span>
+                <span>📋 Bill</span>
                 <span class="px-1.5 py-0.2 rounded-full bg-black text-white text-[10px] font-mono font-black" x-text="heldBills.length"></span>
             </button>
         </div>
@@ -197,23 +208,57 @@
                 <span class="text-2xl font-black font-mono" x-text="'Rp ' + finalAmount.toLocaleString('id-ID')"></span>
             </div>
 
+            <!-- Customer Selector -->
+            <div class="mb-4 p-3 bg-zinc-50 border-2 border-black rounded-xl space-y-1.5">
+                <div class="flex items-center justify-between">
+                    <label class="text-xs font-black uppercase tracking-wider text-black">Pelanggan / Peternak</label>
+                    <button type="button" @click="quickAddCustomer()" class="text-[10px] font-black text-purple-700 hover:underline uppercase">+ Pelanggan Baru</button>
+                </div>
+                <select x-model="customerId" class="neo-input w-full py-1.5 text-xs font-bold uppercase">
+                    <option value="">-- PELANGGAN UMUM (NON-KASBON) --</option>
+                    <template x-for="c in customers" :key="c.id">
+                        <option :value="c.id" x-text="`${c.name} ${c.debt_balance > 0 ? '(Kasbon: Rp ' + Number(c.debt_balance).toLocaleString('id-ID') + ')' : ''}`"></option>
+                    </template>
+                </select>
+            </div>
+
             <!-- Payment Method Tabs -->
-            <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="grid grid-cols-4 gap-2 mb-4">
                 <button type="button" @click="paymentMethod = 'cash'; paidAmount = finalAmount"
                     :class="paymentMethod === 'cash' ? 'bg-emerald-400 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-3 text-xs font-black">
-                    💵 Tunai (Cash)
+                    class="neo-btn py-2 px-1 text-xs font-black text-center">
+                    💵 Tunai
                 </button>
                 <button type="button" @click="paymentMethod = 'qris'; paidAmount = finalAmount"
                     :class="paymentMethod === 'qris' ? 'bg-sky-300 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-3 text-xs font-black">
+                    class="neo-btn py-2 px-1 text-xs font-black text-center">
                     📱 QRIS
                 </button>
                 <button type="button" @click="paymentMethod = 'transfer'; paidAmount = finalAmount"
                     :class="paymentMethod === 'transfer' ? 'bg-purple-300 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-3 text-xs font-black">
+                    class="neo-btn py-2 px-1 text-xs font-black text-center">
                     🏦 Transfer
                 </button>
+                <button type="button" @click="paymentMethod = 'tempo'; paidAmount = 0"
+                    :class="paymentMethod === 'tempo' ? 'bg-rose-400 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
+                    class="neo-btn py-2 px-1 text-xs font-black text-center">
+                    📋 Kasbon
+                </button>
+            </div>
+
+            <!-- Tempo / Kasbon Panel -->
+            <div x-show="paymentMethod === 'tempo'" class="space-y-3 p-3.5 bg-rose-50 border-2 border-black rounded-xl">
+                <div class="text-xs font-bold text-rose-900">
+                    <span class="font-black uppercase">⚠️ Transaksi Kasbon / Tempo:</span>
+                    <p class="mt-0.5">Tagihan sebesar <strong>Rp <span x-text="finalAmount.toLocaleString('id-ID')"></span></strong> akan dicatat sebagai piutang pelanggan.</p>
+                </div>
+                <div x-show="!customerId" class="p-2 bg-rose-200 border border-black rounded text-[11px] font-black text-rose-900">
+                    PILIH NAMA PELANGGAN DI ATAS UNTUK MENGAKTIFKAN KASBON!
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase mb-1">Tanggal Jatuh Tempo Pelunasan</label>
+                    <input type="date" x-model="dueDate" class="neo-input w-full text-xs font-bold">
+                </div>
             </div>
 
             <!-- Cash Input & Quick Money Buttons -->
@@ -252,7 +297,7 @@
                 <button type="button" @click="showPaymentModal = false" class="neo-btn px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-black font-bold text-xs">
                     Batal
                 </button>
-                <button type="button" @click="submitCheckout()" :disabled="isProcessing || (paymentMethod === 'cash' && changeAmount < 0)"
+                <button type="button" @click="submitCheckout()" :disabled="isProcessing || (paymentMethod === 'cash' && changeAmount < 0) || (paymentMethod === 'tempo' && !customerId)"
                     class="neo-btn px-6 py-2.5 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_#000] flex items-center gap-1.5">
                     <span x-show="!isProcessing">Selesaikan & Cetak Struk 🖨</span>
                     <span x-show="isProcessing">Memproses Transaksi...</span>
@@ -295,6 +340,49 @@
             </div>
         </div>
     </div>
+
+    <!-- QUICK PETTY CASH / EXPENSE MODAL -->
+    <div x-show="showExpenseModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white border-3 border-black rounded-2xl w-full max-w-md p-6 shadow-[8px_8px_0px_#000] relative" @click.outside="showExpenseModal = false">
+            <div class="flex items-center justify-between pb-3 border-b-2 border-black">
+                <h3 class="text-base font-black text-black uppercase">💸 Catat Kas Keluar Shift Ini</h3>
+                <button @click="showExpenseModal = false" class="text-black hover:text-rose-600 text-lg font-black">✕</button>
+            </div>
+
+            <form @submit.prevent="submitExpense()" class="space-y-4 my-4">
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Kategori Biaya *</label>
+                    <select x-model="expenseCategory" required class="neo-input w-full text-xs font-bold uppercase">
+                        <option value="Plastik & Karung Eceran">Plastik & Karung Eceran</option>
+                        <option value="Upah Kuli Panggul Pakan">Upah Kuli Panggul Pakan</option>
+                        <option value="Operasional Toko">Operasional Toko</option>
+                        <option value="Konsumsi Karyawan">Konsumsi Karyawan</option>
+                        <option value="Lain-lain">Lain-lain</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Nominal Kas Keluar (Rp) *</label>
+                    <input type="number" x-model.number="expenseAmount" min="1" required class="neo-input w-full font-black text-base" placeholder="25000">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-black uppercase mb-1">Keterangan / Keperluan</label>
+                    <input type="text" x-model="expenseDescription" placeholder="Contoh: Beli lakban & kresek 1kg" class="neo-input w-full text-xs font-bold">
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" @click="showExpenseModal = false" class="neo-btn px-4 py-2 bg-zinc-100 text-black font-bold text-xs">
+                        Batal
+                    </button>
+                    <button type="submit" :disabled="isExpenseSaving" class="neo-btn px-6 py-2 bg-rose-400 text-black font-black text-xs uppercase">
+                        <span x-show="!isExpenseSaving">Simpan Pengeluaran</span>
+                        <span x-show="isExpenseSaving">Menyimpan...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -303,17 +391,28 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('posApp', () => ({
         products: @json($products),
+        customers: @json($customers),
         cart: [],
         searchQuery: '',
         selectedCategory: '',
         discount: 0,
         paymentMethod: 'cash',
         paidAmount: 0,
+        customerId: '',
+        dueDate: '{{ now()->addDays(30)->toDateString() }}',
         isProcessing: false,
         showPaymentModal: false,
         showHoldModal: false,
+        showExpenseModal: false,
         heldBills: @json($heldTransactions),
         activeRegisterId: {{ $activeRegister?->id ?? 'null' }},
+        soundEnabled: localStorage.getItem('feedmart_sound') !== 'false',
+
+        // Quick Expense fields
+        expenseCategory: 'Plastik & Karung Eceran',
+        expenseAmount: null,
+        expenseDescription: '',
+        isExpenseSaving: false,
 
         get subtotal() {
             return this.cart.reduce((sum, item) => sum + (item.qty * item.selling_price), 0);
@@ -325,6 +424,66 @@ document.addEventListener('alpine:init', () => {
 
         get changeAmount() {
             return this.paidAmount - this.finalAmount;
+        },
+
+        // Web Audio Synthesizer Sounds
+        playBeep() {
+            if (!this.soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.08);
+            } catch(e) {}
+        },
+
+        playBuzzer() {
+            if (!this.soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, ctx.currentTime);
+                osc.frequency.setValueAtTime(160, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.22);
+            } catch(e) {}
+        },
+
+        playSuccess() {
+            if (!this.soundEnabled) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                [523.25, 659.25, 783.99].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime + (i * 0.08));
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + (i * 0.08) + 0.18);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(ctx.currentTime + (i * 0.08));
+                    osc.stop(ctx.currentTime + (i * 0.08) + 0.18);
+                });
+            } catch(e) {}
+        },
+
+        toggleSound() {
+            this.soundEnabled = !this.soundEnabled;
+            localStorage.setItem('feedmart_sound', this.soundEnabled);
+            if (this.soundEnabled) this.playBeep();
         },
 
         init() {
@@ -380,6 +539,8 @@ document.addEventListener('alpine:init', () => {
                 this.addToCart(this.products[0]);
                 this.searchQuery = '';
                 this.searchProducts();
+            } else {
+                this.playBuzzer();
             }
         },
 
@@ -389,12 +550,15 @@ document.addEventListener('alpine:init', () => {
                 // Periksa stok
                 const newQty = this.cart[existingIndex].qty + 1;
                 if (newQty > product.stock) {
+                    this.playBuzzer();
                     alert(`Stok '${product.name}' tidak mencukupi! Maksimal: ${product.stock} ${product.unit}`);
                     return;
                 }
                 this.cart[existingIndex].qty = newQty;
+                this.playBeep();
             } else {
                 if (product.stock < 1) {
+                    this.playBuzzer();
                     alert(`Stok '${product.name}' habis.`);
                     return;
                 }
@@ -407,6 +571,7 @@ document.addEventListener('alpine:init', () => {
                     stock: Number(product.stock),
                     qty: 1
                 });
+                this.playBeep();
             }
         },
 
@@ -418,6 +583,7 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
             if (newQty > item.stock) {
+                this.playBuzzer();
                 alert(`Stok tidak mencukupi (Tersedia: ${item.stock} ${item.unit})`);
                 return;
             }
@@ -431,6 +597,7 @@ document.addEventListener('alpine:init', () => {
                 return;
             }
             if (item.qty > item.stock) {
+                this.playBuzzer();
                 alert(`Stok tidak mencukupi (Tersedia: ${item.stock} ${item.unit})`);
                 item.qty = item.stock;
             }
@@ -448,13 +615,78 @@ document.addEventListener('alpine:init', () => {
         },
 
         openPaymentModal() {
-            this.paidAmount = this.finalAmount;
+            this.paidAmount = this.paymentMethod === 'tempo' ? 0 : this.finalAmount;
             this.showPaymentModal = true;
             this.$nextTick(() => {
-                if (this.$refs.cashInput) {
+                if (this.$refs.cashInput && this.paymentMethod === 'cash') {
                     this.$refs.cashInput.select();
                 }
             });
+        },
+
+        async quickAddCustomer() {
+            const name = prompt('Masukkan Nama Pelanggan / Peternak Baru:');
+            if (!name || !name.trim()) return;
+
+            try {
+                const res = await fetch(`{{ route('customers.quick-store') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ name: name.trim() })
+                });
+
+                const data = await res.json();
+                if (data.success && data.customer) {
+                    this.customers.push(data.customer);
+                    this.customerId = data.customer.id;
+                    alert(`Pelanggan '${data.customer.name}' berhasil ditambahkan.`);
+                }
+            } catch(e) {
+                alert('Gagal menambah pelanggan.');
+            }
+        },
+
+        async submitExpense() {
+            if (!this.expenseAmount || this.expenseAmount <= 0) {
+                alert('Masukkan nominal pengeluaran kas.');
+                return;
+            }
+            this.isExpenseSaving = true;
+
+            try {
+                const res = await fetch(`{{ route('expenses.quick-store') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        category: this.expenseCategory,
+                        amount: this.expenseAmount,
+                        description: this.expenseDescription,
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    this.playBeep();
+                    alert(data.message);
+                    this.showExpenseModal = false;
+                    this.expenseAmount = null;
+                    this.expenseDescription = '';
+                } else {
+                    alert('Gagal mencatat kas keluar.');
+                }
+            } catch(e) {
+                alert('Terjadi kesalahan jaringan.');
+            } finally {
+                this.isExpenseSaving = false;
+            }
         },
 
         async submitCheckout() {
@@ -468,9 +700,11 @@ document.addEventListener('alpine:init', () => {
                     selling_price: i.selling_price
                 })),
                 payment_method: this.paymentMethod,
-                paid_amount: this.paidAmount,
+                paid_amount: this.paymentMethod === 'tempo' ? 0 : this.paidAmount,
                 discount: this.discount || 0,
-                cash_register_id: this.activeRegisterId
+                cash_register_id: this.activeRegisterId,
+                customer_id: this.customerId ? Number(this.customerId) : null,
+                due_date: this.paymentMethod === 'tempo' ? this.dueDate : null,
             };
 
             try {
@@ -486,9 +720,11 @@ document.addEventListener('alpine:init', () => {
 
                 const data = await res.json();
                 if (data.success) {
+                    this.playSuccess();
                     this.showPaymentModal = false;
                     this.cart = [];
                     this.discount = 0;
+                    this.customerId = '';
                     
                     // Buka struk thermal di popup print
                     window.open(data.receipt_url, '_blank', 'width=450,height=600');
@@ -496,9 +732,11 @@ document.addEventListener('alpine:init', () => {
                     // Refresh data produk agar stok terbaru terlihat
                     await this.searchProducts();
                 } else {
+                    this.playBuzzer();
                     alert('Gagal Checkout: ' + (data.message || 'Terjadi kesalahan sistem'));
                 }
             } catch (err) {
+                this.playBuzzer();
                 console.error(err);
                 alert('Terjadi kesalahan jaringan atau server.');
             } finally {
@@ -531,11 +769,13 @@ document.addEventListener('alpine:init', () => {
 
                 const data = await res.json();
                 if (data.success) {
+                    this.playBeep();
                     alert(data.message);
                     this.heldBills.unshift(data.transaction);
                     this.cart = [];
                     this.discount = 0;
                 } else {
+                    this.playBuzzer();
                     alert('Gagal Hold: ' + data.message);
                 }
             } catch (err) {
@@ -561,6 +801,7 @@ document.addEventListener('alpine:init', () => {
 
                 const data = await res.json();
                 if (data.success) {
+                    this.playBeep();
                     this.cart = data.items;
                     this.discount = data.discount;
                     this.heldBills = this.heldBills.filter(b => b.id !== id);

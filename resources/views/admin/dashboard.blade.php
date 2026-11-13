@@ -83,6 +83,33 @@
         </div>
     </div>
 
+    <!-- Quick Actions Launchpad (Neo-Brutalist Minimalism) -->
+    <div class="neo-box p-4 bg-white flex flex-wrap items-center justify-between gap-3">
+        <span class="text-xs font-black uppercase tracking-wider text-black flex items-center gap-1.5">
+            <span>⚡</span> AKSI CEPAT SISTEM:
+        </span>
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('admin.barcode.index') }}" class="neo-btn px-3 py-1.5 bg-yellow-300 hover:bg-yellow-200 text-black text-xs font-black">
+                🏷️ Cetak Barcode
+            </a>
+            <a href="{{ route('admin.customers.index') }}" class="neo-btn px-3 py-1.5 bg-cyan-300 hover:bg-cyan-200 text-black text-xs font-black">
+                👥 Pelanggan & Kasbon
+            </a>
+            <a href="{{ route('admin.expenses.index') }}" class="neo-btn px-3 py-1.5 bg-rose-300 hover:bg-rose-200 text-black text-xs font-black">
+                💸 Kas Keluar
+            </a>
+            <a href="{{ route('admin.returns.create') }}" class="neo-btn px-3 py-1.5 bg-purple-300 hover:bg-purple-200 text-black text-xs font-black">
+                🔄 Catat Retur
+            </a>
+            <a href="{{ route('admin.backup.download') }}" class="neo-btn px-3 py-1.5 bg-emerald-300 hover:bg-emerald-200 text-black text-xs font-black">
+                💾 Backup DB
+            </a>
+            <a href="{{ route('admin.settings.index') }}" class="neo-btn px-3 py-1.5 bg-white hover:bg-zinc-100 text-black text-xs font-black">
+                ⚙️ Pengaturan
+            </a>
+        </div>
+    </div>
+
     <!-- Alert Sections: Low Stock & Expiring Batches -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Low Stock Alert -->

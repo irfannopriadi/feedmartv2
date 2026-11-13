@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CashRegister;
+use App\Models\Expense;
 use App\Models\Transaction;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -90,13 +91,16 @@ class CashRegisterController extends Controller
             ->where('status', 'completed')
             ->count();
 
-        $expectedCash = (float) $register->opening_cash + (float) $cashSales;
+        $cashExpenses = Expense::where('cash_register_id', $register->id)->sum('amount');
+
+        $expectedCash = (float) $register->opening_cash + (float) $cashSales - (float) $cashExpenses;
 
         return view('cash_register.close', compact(
             'register',
             'cashSales',
             'nonCashSales',
             'totalTransactions',
+            'cashExpenses',
             'expectedCash'
         ));
     }
@@ -122,7 +126,9 @@ class CashRegisterController extends Controller
             ->where('payment_method', 'cash')
             ->sum('final_amount');
 
-        $expectedCash = (float) $register->opening_cash + (float) $cashSales;
+        $cashExpenses = Expense::where('cash_register_id', $register->id)->sum('amount');
+
+        $expectedCash = (float) $register->opening_cash + (float) $cashSales - (float) $cashExpenses;
 
         $register->update([
             'closing_cash' => $request->closing_cash,
@@ -157,11 +163,13 @@ class CashRegisterController extends Controller
             ->whereIn('payment_method', ['qris', 'transfer'])
             ->sum('final_amount');
 
+        $cashExpenses = Expense::where('cash_register_id', $register->id)->sum('amount');
+
         $transactions = Transaction::where('cash_register_id', $register->id)
             ->with('details.product')
             ->latest()
             ->get();
 
-        return view('cash_register.report', compact('register', 'cashSales', 'nonCashSales', 'transactions'));
+        return view('cash_register.report', compact('register', 'cashSales', 'nonCashSales', 'cashExpenses', 'transactions'));
     }
 }

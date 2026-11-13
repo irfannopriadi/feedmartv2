@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\CashRegister;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\ProductBatch;
 use App\Models\StockMutation;
@@ -19,7 +20,7 @@ class PosCheckoutService
      *
      * @param  User  $user  Kasir / Admin
      * @param  array  $items  Array of ['product_id' => int, 'qty' => float, 'selling_price' => ?float]
-     * @param  string  $paymentMethod  'cash' | 'qris' | 'transfer'
+     * @param  string  $paymentMethod  'cash' | 'qris' | 'transfer' | 'tempo'
      * @param  string  $status  'completed' | 'hold'
      *
      * @throws Exception
@@ -31,10 +32,16 @@ class PosCheckoutService
         float $paidAmount = 0.00,
         float $discount = 0.00,
         string $status = 'completed',
-        ?int $cashRegisterId = null
+        ?int $cashRegisterId = null,
+        ?int $customerId = null,
+        ?string $dueDate = null
     ): Transaction {
         if (empty($items)) {
             throw new Exception('Keranjang belanja masih kosong.');
+        }
+
+        if ($status === 'completed' && $paymentMethod === 'tempo' && ! $customerId) {
+            throw new Exception('Untuk transaksi Kasbon / Tempo, nama pelanggan/peternak wajib dipilih!');
         }
 
         // Jika cash register tidak disuplai, cari kasir shift aktif jika status completed
@@ -46,7 +53,7 @@ class PosCheckoutService
             $cashRegisterId = $activeRegister?->id;
         }
 
-        return DB::transaction(function () use ($user, $items, $paymentMethod, $paidAmount, $discount, $status, $cashRegisterId) {
+        return DB::transaction(function () use ($user, $items, $paymentMethod, $paidAmount, $discount, $status, $cashRegisterId, $customerId, $dueDate) {
             $subtotal = 0.00;
             $preparedDetails = [];
 
@@ -92,11 +99,26 @@ class PosCheckoutService
                 if ($paymentMethod === 'cash' && $paidAmount < $finalAmount) {
                     throw new Exception('Uang pembayaran kurang! (Total: Rp '.number_format($finalAmount, 0, ',', '.').', Diberikan: Rp '.number_format($paidAmount, 0, ',', '.').')');
                 }
-            }
 
-            $changeAmount = ($paymentMethod === 'cash' && $paidAmount >= $finalAmount)
-                ? ($paidAmount - $finalAmount)
-                : 0.00;
+                if ($paymentMethod === 'tempo') {
+                    $paidAmount = 0.00;
+                    $changeAmount = 0.00;
+
+                    // Tambahkan ke saldo kasbon pelanggan
+                    if ($customerId) {
+                        $customer = Customer::lockForUpdate()->find($customerId);
+                        if ($customer) {
+                            $customer->increment('debt_balance', $finalAmount);
+                        }
+                    }
+                } else {
+                    $changeAmount = ($paymentMethod === 'cash' && $paidAmount >= $finalAmount)
+                        ? ($paidAmount - $finalAmount)
+                        : 0.00;
+                }
+            } else {
+                $changeAmount = 0.00;
+            }
 
             // 2. Buat Nomor Invoice Unik
             $invoiceNumber = $this->generateInvoiceNumber();
@@ -106,12 +128,14 @@ class PosCheckoutService
                 'invoice_number' => $invoiceNumber,
                 'user_id' => $user->id,
                 'cash_register_id' => $cashRegisterId,
+                'customer_id' => $customerId,
                 'subtotal' => $subtotal,
                 'discount' => $discount,
                 'final_amount' => $finalAmount,
-                'paid_amount' => $status === 'completed' ? ($paymentMethod === 'cash' ? $paidAmount : $finalAmount) : 0.00,
+                'paid_amount' => $status === 'completed' ? ($paymentMethod === 'tempo' ? 0.00 : ($paymentMethod === 'cash' ? $paidAmount : $finalAmount)) : 0.00,
                 'change_amount' => $status === 'completed' ? $changeAmount : 0.00,
                 'payment_method' => $paymentMethod,
+                'due_date' => $paymentMethod === 'tempo' ? ($dueDate ?? now()->addDays(30)->toDateString()) : null,
                 'status' => $status,
             ]);
 

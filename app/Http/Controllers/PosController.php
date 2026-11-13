@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AnimalCategory;
 use App\Models\CashRegister;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Services\PosCheckoutService;
@@ -49,7 +50,9 @@ class PosController extends Controller
             ->latest()
             ->get();
 
-        return view('pos.index', compact('categories', 'products', 'activeRegister', 'heldTransactions'));
+        $customers = Customer::orderBy('name')->get();
+
+        return view('pos.index', compact('categories', 'products', 'activeRegister', 'heldTransactions', 'customers'));
     }
 
     /**
@@ -94,10 +97,12 @@ class PosController extends Controller
             'items' => ['required', 'array', 'min:1'],
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.qty' => ['required', 'numeric', 'min:0.01'],
-            'payment_method' => ['required', 'in:cash,qris,transfer'],
-            'paid_amount' => ['required_if:payment_method,cash', 'numeric', 'min:0'],
+            'payment_method' => ['required', 'in:cash,qris,transfer,tempo'],
+            'paid_amount' => ['required_if:payment_method,cash', 'nullable', 'numeric', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0'],
             'cash_register_id' => ['nullable', 'exists:cash_registers,id'],
+            'customer_id' => ['nullable', 'exists:customers,id'],
+            'due_date' => ['nullable', 'date'],
         ]);
 
         try {
@@ -108,7 +113,9 @@ class PosController extends Controller
                 paidAmount: (float) $request->paid_amount,
                 discount: (float) ($request->discount ?? 0),
                 status: 'completed',
-                cashRegisterId: $request->cash_register_id
+                cashRegisterId: $request->cash_register_id,
+                customerId: $request->customer_id ? (int) $request->customer_id : null,
+                dueDate: $request->due_date
             );
 
             return response()->json([

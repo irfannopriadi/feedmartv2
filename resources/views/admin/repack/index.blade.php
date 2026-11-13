@@ -67,12 +67,18 @@
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-t-2 border-black flex items-center justify-between">
+                <div class="mt-4 pt-3 border-t-2 border-black flex items-center justify-between gap-2">
                     <span class="text-xs font-black font-mono text-black">Rp {{ number_format($item->selling_price, 0, ',', '.') }} / {{ $item->unit }}</span>
-                    <button type="button" @click="selectForRepack({{ $item }})"
-                        class="neo-btn px-3 py-1.5 bg-purple-300 hover:bg-purple-200 text-black font-black text-xs">
-                        Bongkar Sak →
-                    </button>
+                    <div class="flex items-center gap-1.5">
+                        <a href="{{ route('admin.barcode.index', ['product_id' => $item->id]) }}" target="_blank"
+                            class="neo-btn px-2.5 py-1.5 bg-yellow-200 hover:bg-yellow-300 text-black font-black text-xs" title="Cetak Barcode Stiker">
+                            🏷️
+                        </a>
+                        <button type="button" @click="selectForRepack({{ $item }})"
+                            class="neo-btn px-3 py-1.5 bg-purple-300 hover:bg-purple-200 text-black font-black text-xs">
+                            Bongkar Sak →
+                        </button>
+                    </div>
                 </div>
             </div>
         @empty
