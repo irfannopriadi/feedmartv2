@@ -28,7 +28,9 @@ return new class extends Migration
         });
 
         // Expand payment_method enum to allow 'tempo'
-        DB::statement("ALTER TABLE transactions MODIFY payment_method ENUM('cash', 'qris', 'transfer', 'tempo') DEFAULT 'cash'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE transactions MODIFY payment_method ENUM('cash', 'qris', 'transfer', 'tempo') DEFAULT 'cash'");
+        }
 
         Schema::create('customer_debt_payments', function (Blueprint $table) {
             $table->id();
@@ -54,7 +56,9 @@ return new class extends Migration
             $table->dropColumn(['customer_id', 'due_date']);
         });
 
-        DB::statement("ALTER TABLE transactions MODIFY payment_method ENUM('cash', 'qris', 'transfer') DEFAULT 'cash'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE transactions MODIFY payment_method ENUM('cash', 'qris', 'transfer') DEFAULT 'cash'");
+        }
 
         Schema::dropIfExists('customers');
     }

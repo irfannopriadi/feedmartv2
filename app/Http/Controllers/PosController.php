@@ -40,7 +40,8 @@ class PosController extends Controller
 
         $categories = AnimalCategory::orderBy('name')->get();
         $products = Product::where('is_active', true)
-            ->with(['animalCategory', 'batches' => fn ($q) => $q->where('stock_in_batch', '>', 0)->orderBy('expired_date')])
+            ->with('animalCategory')
+            ->select('id', 'name', 'sku', 'barcode', 'selling_price', 'cost_price', 'stock', 'unit', 'is_repack', 'animal_category_id')
             ->orderBy('name')
             ->get();
 

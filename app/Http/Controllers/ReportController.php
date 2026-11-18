@@ -26,14 +26,19 @@ class ReportController extends Controller
         $transactions = (clone $query)->with(['user', 'details.product'])->latest()->paginate(20)->withQueryString();
 
         // Ringkasan Finansial
-        $totalSales = (clone $query)->sum('final_amount');
-        $totalDiscount = (clone $query)->sum('discount');
-        $totalTransactionsCount = (clone $query)->count();
+        $financials = (clone $query)->selectRaw('COALESCE(SUM(final_amount), 0) as total_sales, COALESCE(SUM(discount), 0) as total_discount, COUNT(*) as total_count')->first();
+        $totalSales = (float) ($financials->total_sales ?? 0);
+        $totalDiscount = (float) ($financials->total_discount ?? 0);
+        $totalTransactionsCount = (int) ($financials->total_count ?? 0);
 
-        // Hitung total HPP transaksi terfilter
-        $transactionIds = (clone $query)->pluck('id');
-        $totalHpp = TransactionDetail::whereIn('transaction_id', $transactionIds)
-            ->sum(DB::raw('cost_price * qty'));
+        // Hitung total HPP transaksi terfilter via direct JOIN (jauh lebih cepat tanpa memory leak pluck ID)
+        $totalHpp = (float) TransactionDetail::join('transactions', 'transactions.id', '=', 'transaction_details.transaction_id')
+            ->where('transactions.status', 'completed')
+            ->whereDate('transactions.created_at', '>=', $dateFrom)
+            ->whereDate('transactions.created_at', '<=', $dateTo)
+            ->when(! empty($paymentMethod), fn ($q) => $q->where('transactions.payment_method', $paymentMethod))
+            ->when(! empty($userId), fn ($q) => $q->where('transactions.user_id', $userId))
+            ->sum(DB::raw('transaction_details.cost_price * transaction_details.qty'));
 
         $grossProfit = $totalSales - $totalHpp;
         $profitMargin = $totalSales > 0 ? ($grossProfit / $totalSales) * 100 : 0;

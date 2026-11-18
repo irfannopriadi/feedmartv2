@@ -33,8 +33,9 @@ class CustomerController extends Controller
             $query->where('debt_balance', '>', 0);
         }
 
-        $totalReceivables = Customer::sum('debt_balance');
-        $customersWithDebtCount = Customer::where('debt_balance', '>', 0)->count();
+        $stats = Customer::selectRaw('COALESCE(SUM(debt_balance), 0) as total_receivables, COUNT(CASE WHEN debt_balance > 0 THEN 1 END) as debt_count')->first();
+        $totalReceivables = (float) ($stats->total_receivables ?? 0);
+        $customersWithDebtCount = (int) ($stats->debt_count ?? 0);
 
         $customers = $query->orderByDesc('debt_balance')->orderBy('name')->paginate(15)->withQueryString();
 
