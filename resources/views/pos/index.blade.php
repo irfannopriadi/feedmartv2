@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="h-full flex flex-col md:flex-row overflow-hidden" x-data="posApp()">
-    <!-- Left Column: Product Catalog & Fast Search (Neo-Brutalist Minimalism) -->
-    <div class="flex-1 flex flex-col bg-[#F8F8F5] border-r-2 border-black overflow-hidden">
+    <!-- Left Column: Product Catalog & Fast Search (Full Light Glassmorphism) -->
+    <div class="flex-1 flex flex-col border-r border-white/70 overflow-hidden">
         <!-- Search and Barcode Input Bar -->
-        <div class="p-3 bg-white border-b-2 border-black flex items-center gap-2.5">
+        <div class="p-3 bg-white/55 backdrop-blur-xl border-b border-white/75 flex items-center gap-2.5">
             <div class="relative flex-1">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-black font-bold">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </span>
                 <input type="text"
                     x-model="searchQuery"
@@ -18,203 +18,203 @@
                     @keydown.enter.prevent="handleScanEnter()"
                     x-ref="barcodeInput"
                     placeholder="Scan Barcode / Cari pakan ternak... [Enter scan]"
-                    class="neo-input pl-9 pr-4 py-2 text-xs font-bold">
+                    class="glass-input pl-9 pr-4 py-2 text-xs font-semibold">
             </div>
 
             <!-- Sound Feedback Toggle -->
-            <button type="button" @click="toggleSound()" class="neo-btn px-2.5 py-2 bg-zinc-100 hover:bg-zinc-200 text-black text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1 flex-shrink-0" :title="soundEnabled ? 'Matikan Suara Beep' : 'Aktifkan Suara Beep'">
+            <button type="button" @click="toggleSound()" class="glass-btn px-3 py-2 bg-white/70 hover:bg-white/95 text-slate-700 text-xs font-bold flex items-center gap-1.5 flex-shrink-0" :title="soundEnabled ? 'Matikan Suara Beep' : 'Aktifkan Suara Beep'">
                 <span x-text="soundEnabled ? '🔊' : '🔇'"></span>
                 <span class="hidden sm:inline text-[10px]" x-text="soundEnabled ? 'BEEP ON' : 'MUTE'"></span>
             </button>
 
             <!-- Quick Petty Cash / Expense -->
-            <button type="button" @click="showExpenseModal = true" class="neo-btn px-3 py-2 bg-rose-200 hover:bg-rose-300 text-black text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1 flex-shrink-0">
+            <button type="button" @click="showExpenseModal = true" class="glass-btn px-3 py-2 bg-rose-500/15 hover:bg-rose-500/25 text-rose-800 border-rose-400/35 text-xs font-bold flex items-center gap-1 flex-shrink-0">
                 <span>💸 Kas Keluar</span>
             </button>
 
             <!-- Recall Hold Bill Button -->
-            <button type="button" @click="showHoldModal = true" class="neo-btn px-3 py-2 bg-yellow-300 hover:bg-yellow-200 text-black text-xs font-black shadow-[2px_2px_0px_#000] flex items-center gap-1.5 flex-shrink-0">
+            <button type="button" @click="showHoldModal = true" class="glass-btn px-3 py-2 bg-amber-400/25 hover:bg-amber-400/40 text-amber-900 border-amber-400/40 text-xs font-bold flex items-center gap-1.5 flex-shrink-0">
                 <span>📋 Bill</span>
-                <span class="px-1.5 py-0.2 rounded-full bg-black text-white text-[10px] font-mono font-black" x-text="heldBills.length"></span>
+                <span class="px-1.5 py-0.5 rounded-full bg-slate-800/85 text-white text-[10px] font-mono font-bold" x-text="heldBills.length"></span>
             </button>
         </div>
 
         <!-- Category Pills (Kategori Hewan) -->
-        <div class="px-3 py-2 bg-white border-b-2 border-black flex items-center gap-2 overflow-x-auto text-xs whitespace-nowrap">
+        <div class="px-3 py-2 bg-white/40 backdrop-blur-md border-b border-white/70 flex items-center gap-2 overflow-x-auto text-xs whitespace-nowrap">
             <button type="button" @click="selectCategory('')"
-                :class="selectedCategory === '' ? 'bg-emerald-400 text-black' : 'bg-zinc-100 hover:bg-zinc-200 text-black'"
-                class="neo-btn px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#000]">
+                :class="selectedCategory === '' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400/50 shadow-md shadow-emerald-500/20' : 'bg-white/65 hover:bg-white/90 text-slate-700'"
+                class="glass-btn px-3.5 py-1.5 text-xs font-bold">
                 Semua Hewan
             </button>
             @foreach($categories as $cat)
                 <button type="button" @click="selectCategory('{{ $cat->id }}')"
-                    :class="selectedCategory === '{{ $cat->id }}' ? 'bg-emerald-400 text-black' : 'bg-zinc-100 hover:bg-zinc-200 text-black'"
-                    class="neo-btn px-3 py-1.5 text-xs font-black shadow-[2px_2px_0px_#000]">
+                    :class="selectedCategory === '{{ $cat->id }}' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400/50 shadow-md shadow-emerald-500/20' : 'bg-white/65 hover:bg-white/90 text-slate-700'"
+                    class="glass-btn px-3.5 py-1.5 text-xs font-bold">
                     {{ $cat->name }}
                 </button>
             @endforeach
         </div>
 
         <!-- Product Grid -->
-        <div class="flex-1 p-3 overflow-y-auto">
+        <div class="flex-1 p-3.5 overflow-y-auto">
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 <template x-for="product in products" :key="product.id">
                     <button type="button"
                         @click="addToCart(product)"
                         :disabled="product.stock <= 0"
-                        :class="product.stock <= 0 ? 'opacity-50 cursor-not-allowed bg-zinc-100 border-2 border-black/40 shadow-none' : 'neo-box-sm hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[5px_5px_0px_#000] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_#000] bg-white cursor-pointer'"
-                        class="p-3 text-left transition-all flex flex-col justify-between relative group">
+                        :class="product.stock <= 0 ? 'opacity-50 cursor-not-allowed bg-white/35 border border-white/50 rounded-2xl' : 'glass-box-sm hover:-translate-y-0.5 hover:bg-white/80 hover:shadow-lg hover:shadow-emerald-500/10 active:scale-[0.99] cursor-pointer'"
+                        class="p-3.5 text-left transition-all flex flex-col justify-between relative group">
                         
                         <!-- Badges -->
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="neo-badge"
-                                :class="product.is_repack ? 'bg-purple-300 text-black' : 'bg-sky-300 text-black'"
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="glass-badge"
+                                :class="product.is_repack ? 'bg-violet-500/15 text-violet-800 border-violet-400/30' : 'bg-sky-500/15 text-sky-800 border-sky-400/30'"
                                 x-text="product.is_repack ? 'Eceran' : product.unit">
                             </span>
-                            <span class="text-[10px] font-mono font-black"
-                                :class="product.stock <= 0 ? 'text-rose-600' : (product.stock <= product.min_stock_alert ? 'text-amber-600' : 'text-zinc-600')">
+                            <span class="text-[10px] font-mono font-bold"
+                                :class="product.stock <= 0 ? 'text-rose-600' : (product.stock <= product.min_stock_alert ? 'text-amber-600' : 'text-slate-500')">
                                 Stok: <span x-text="Number(product.stock).toLocaleString('id-ID', {maximumFractionDigits: 2})"></span> <span x-text="product.unit"></span>
                             </span>
                         </div>
 
                         <!-- Product Name -->
                         <div class="my-1.5">
-                            <h4 class="text-xs font-black text-black line-clamp-2" x-text="product.name"></h4>
-                            <span class="text-[10px] text-zinc-500 block font-mono font-bold mt-0.5" x-text="product.barcode || product.sku"></span>
+                            <h4 class="text-xs font-bold text-slate-900 line-clamp-2" x-text="product.name"></h4>
+                            <span class="text-[10px] text-slate-500 block font-mono font-medium mt-0.5" x-text="product.barcode || product.sku"></span>
                         </div>
 
                         <!-- Price -->
-                        <div class="mt-2 pt-2 border-t-2 border-black/10 flex items-center justify-between">
-                            <span class="text-xs font-black font-mono text-black" x-text="'Rp ' + Number(product.selling_price).toLocaleString('id-ID')"></span>
-                            <span class="w-6 h-6 rounded-md bg-emerald-400 text-black border-2 border-black flex items-center justify-center font-black text-xs shadow-[1.5px_1.5px_0px_#000] group-hover:bg-black group-hover:text-emerald-400 transition-colors">+</span>
+                        <div class="mt-2 pt-2 border-t border-slate-200/70 flex items-center justify-between">
+                            <span class="text-xs font-extrabold font-mono text-slate-900" x-text="'Rp ' + Number(product.selling_price).toLocaleString('id-ID')"></span>
+                            <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-700 border border-emerald-400/35 flex items-center justify-center font-bold text-xs group-hover:bg-emerald-500 group-hover:text-white transition-colors">+</span>
                         </div>
                     </button>
                 </template>
             </div>
 
-            <div x-show="products.length === 0" class="h-64 flex flex-col items-center justify-center text-zinc-400">
+            <div x-show="products.length === 0" class="h-64 flex flex-col items-center justify-center text-slate-400">
                 <span class="text-4xl mb-2">🔍</span>
-                <p class="text-xs font-black text-zinc-600">Tidak ada produk yang cocok dengan pencarian.</p>
+                <p class="text-xs font-semibold text-slate-500">Tidak ada produk yang cocok dengan pencarian.</p>
             </div>
         </div>
     </div>
 
-    <!-- Right Column: Active Cart & Fast Checkout (Neo-Brutalist Minimalism) -->
-    <div class="w-full md:w-96 lg:w-[420px] bg-white border-l-2 border-black flex flex-col h-full flex-shrink-0">
+    <!-- Right Column: Active Cart & Fast Checkout (Full Light Glassmorphism) -->
+    <div class="w-full md:w-96 lg:w-[420px] bg-white/55 backdrop-blur-2xl border-l border-white/75 flex flex-col h-full flex-shrink-0 shadow-[-4px_0_24px_rgba(15,23,42,0.03)]">
         <!-- Cart Header -->
-        <div class="p-3 bg-black text-white border-b-2 border-black flex items-center justify-between">
+        <div class="p-3.5 bg-white/55 border-b border-white/75 flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <span class="text-base">🛒</span>
-                <h3 class="font-black text-sm tracking-wide uppercase">Keranjang Kasir</h3>
-                <span class="neo-badge bg-yellow-300 text-black font-mono" x-text="cart.length + ' item'"></span>
+                <h3 class="font-extrabold text-sm tracking-tight text-slate-800 uppercase">Keranjang Kasir</h3>
+                <span class="glass-badge bg-amber-400/20 text-amber-900 border-amber-400/35 font-mono" x-text="cart.length + ' item'"></span>
             </div>
-            <button type="button" @click="clearCart()" x-show="cart.length > 0" class="text-xs text-rose-400 hover:text-rose-300 font-black uppercase tracking-wider underline cursor-pointer">
+            <button type="button" @click="clearCart()" x-show="cart.length > 0" class="text-xs text-rose-600 hover:text-rose-700 font-bold uppercase tracking-wider hover:underline cursor-pointer">
                 Kosongkan
             </button>
         </div>
 
         <!-- Cart Item List -->
-        <div class="flex-1 overflow-y-auto p-3 space-y-2 bg-[#FBFBFA]">
+        <div class="flex-1 overflow-y-auto p-3 space-y-2.5">
             <template x-for="(item, index) in cart" :key="item.id">
-                <div class="p-2.5 bg-white border-2 border-black rounded-xl shadow-[2px_2px_0px_#000]">
+                <div class="p-3 glass-box-sm">
                     <div class="flex items-start justify-between">
                         <div class="flex-1 pr-2">
-                            <h4 class="text-xs font-black text-black line-clamp-1" x-text="item.name"></h4>
-                            <span class="text-[10px] text-zinc-600 font-mono font-bold" x-text="'@ Rp ' + Number(item.selling_price).toLocaleString('id-ID') + ' / ' + item.unit"></span>
+                            <h4 class="text-xs font-bold text-slate-900 line-clamp-1" x-text="item.name"></h4>
+                            <span class="text-[10px] text-slate-500 font-mono font-semibold" x-text="'@ Rp ' + Number(item.selling_price).toLocaleString('id-ID') + ' / ' + item.unit"></span>
                         </div>
-                        <span class="text-xs font-black font-mono text-black" x-text="'Rp ' + (item.qty * item.selling_price).toLocaleString('id-ID')"></span>
+                        <span class="text-xs font-extrabold font-mono text-slate-900" x-text="'Rp ' + (item.qty * item.selling_price).toLocaleString('id-ID')"></span>
                     </div>
 
                     <!-- Quantity Control with Decimal Timbangan Support -->
-                    <div class="flex items-center justify-between mt-2 pt-2 border-t-2 border-black/10">
+                    <div class="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-200/70">
                         <div class="flex items-center space-x-1.5">
-                            <button type="button" @click="updateQty(index, -1)" class="w-6 h-6 rounded border-2 border-black bg-white hover:bg-zinc-200 text-black font-black flex items-center justify-center text-xs shadow-[1px_1px_0px_#000] cursor-pointer">-</button>
+                            <button type="button" @click="updateQty(index, -1)" class="w-7 h-7 rounded-lg border border-white/80 bg-white/75 hover:bg-white text-slate-700 font-bold flex items-center justify-center text-xs shadow-xs cursor-pointer transition">-</button>
                             
                             <!-- Input Decimal Kiloan (0.5, 1.25 dll) -->
                             <input type="number" step="0.01" min="0.01" x-model.number="item.qty" @change="validateQty(index)"
-                                class="w-16 px-1 py-0.5 text-center bg-white border-2 border-black rounded text-xs font-black font-mono text-black focus:outline-none shadow-[1px_1px_0px_#000]">
+                                class="w-16 px-1.5 py-1 text-center bg-white/75 border border-slate-300/60 rounded-lg text-xs font-bold font-mono text-slate-900 focus:outline-none focus:border-emerald-500">
                             
-                            <span class="text-[10px] font-black text-zinc-600" x-text="item.unit"></span>
+                            <span class="text-[10px] font-bold text-slate-500" x-text="item.unit"></span>
 
-                            <button type="button" @click="updateQty(index, 1)" class="w-6 h-6 rounded border-2 border-black bg-white hover:bg-zinc-200 text-black font-black flex items-center justify-center text-xs shadow-[1px_1px_0px_#000] cursor-pointer">+</button>
+                            <button type="button" @click="updateQty(index, 1)" class="w-7 h-7 rounded-lg border border-white/80 bg-white/75 hover:bg-white text-slate-700 font-bold flex items-center justify-center text-xs shadow-xs cursor-pointer transition">+</button>
                         </div>
 
-                        <button type="button" @click="removeItem(index)" class="w-6 h-6 rounded border-2 border-black bg-rose-200 hover:bg-rose-300 text-black font-black flex items-center justify-center text-xs shadow-[1px_1px_0px_#000] cursor-pointer" title="Hapus">
+                        <button type="button" @click="removeItem(index)" class="w-7 h-7 rounded-lg border border-rose-300/40 bg-rose-500/12 hover:bg-rose-500/25 text-rose-700 font-bold flex items-center justify-center text-xs transition cursor-pointer" title="Hapus">
                             🗑
                         </button>
                     </div>
                 </div>
             </template>
 
-            <div x-show="cart.length === 0" class="h-64 flex flex-col items-center justify-center text-zinc-400">
+            <div x-show="cart.length === 0" class="h-64 flex flex-col items-center justify-center text-slate-400">
                 <span class="text-4xl mb-2">🌾</span>
-                <p class="text-xs font-black text-black">Keranjang kasir masih kosong</p>
-                <p class="text-[10px] text-zinc-500 font-bold mt-1">Scan barcode atau klik produk di katalog</p>
+                <p class="text-xs font-bold text-slate-700">Keranjang kasir masih kosong</p>
+                <p class="text-[10px] text-slate-500 font-medium mt-1">Scan barcode atau klik produk di katalog</p>
             </div>
         </div>
 
         <!-- Cart Summary & Actions -->
-        <div class="p-3 border-t-2 border-black bg-zinc-100 space-y-2 text-xs">
+        <div class="p-3.5 border-t border-white/75 bg-white/55 backdrop-blur-xl space-y-2.5 text-xs">
             <!-- Subtotal -->
-            <div class="flex items-center justify-between font-black text-black">
+            <div class="flex items-center justify-between font-bold text-slate-700">
                 <span class="uppercase tracking-wider text-[11px]">Subtotal:</span>
-                <span class="text-sm font-mono" x-text="'Rp ' + subtotal.toLocaleString('id-ID')"></span>
+                <span class="text-sm font-mono text-slate-900" x-text="'Rp ' + subtotal.toLocaleString('id-ID')"></span>
             </div>
 
             <!-- Diskon -->
-            <div class="flex items-center justify-between font-black text-black">
+            <div class="flex items-center justify-between font-bold text-slate-700">
                 <span class="uppercase tracking-wider text-[11px]">Diskon (Rp):</span>
                 <input type="number" min="0" step="1000" x-model.number="discount"
-                    class="w-28 px-2 py-1 text-right neo-input text-xs font-mono font-black">
+                    class="w-28 px-2.5 py-1 text-right glass-input text-xs font-mono font-bold">
             </div>
 
             <!-- Grand Total Banner -->
-            <div class="p-3 rounded-xl bg-emerald-400 border-2 border-black text-black flex items-center justify-between shadow-[3px_3px_0px_#000]">
+            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border border-emerald-400/40 text-slate-900 flex items-center justify-between shadow-sm backdrop-blur-md">
                 <div>
-                    <span class="text-[10px] font-black uppercase tracking-wider block text-black">Total Tagihan</span>
-                    <span class="text-xl font-black font-mono tracking-tight" x-text="'Rp ' + finalAmount.toLocaleString('id-ID')"></span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider block text-emerald-800">Total Tagihan</span>
+                    <span class="text-xl font-extrabold font-mono tracking-tight text-slate-900" x-text="'Rp ' + finalAmount.toLocaleString('id-ID')"></span>
                 </div>
-                <span class="neo-badge bg-black text-white" x-text="paymentMethod.toUpperCase()"></span>
+                <span class="glass-badge bg-white/80 text-emerald-800 border-emerald-400/35" x-text="paymentMethod.toUpperCase()"></span>
             </div>
 
             <!-- Buttons: Hold & Checkout -->
             <div class="grid grid-cols-3 gap-2 pt-1">
                 <button type="button" @click="holdBill()" :disabled="cart.length === 0 || isProcessing"
-                    class="neo-btn py-2.5 bg-amber-300 hover:bg-amber-200 disabled:opacity-50 text-black font-black text-xs shadow-[2px_2px_0px_#000]">
+                    class="glass-btn py-2.5 bg-amber-400/25 hover:bg-amber-400/40 text-amber-900 border-amber-400/40 font-bold text-xs">
                     <span>⏸ Hold</span>
                 </button>
                 <button type="button" @click="openPaymentModal()" :disabled="cart.length === 0 || isProcessing"
-                    class="neo-btn col-span-2 py-2.5 bg-black hover:bg-zinc-800 disabled:opacity-50 text-white font-black text-xs uppercase tracking-wider shadow-[2px_2px_0px_#000] flex items-center justify-center gap-1.5">
+                    class="glass-btn col-span-2 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white border-emerald-400/50 font-bold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5">
                     <span>💳 Bayar (F8)</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- FAST PAYMENT MODAL (Neo-Brutalist Minimalism) -->
-    <div x-show="showPaymentModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white border-3 border-black rounded-2xl w-full max-w-lg p-6 shadow-[8px_8px_0px_#000] relative" @click.outside="showPaymentModal = false">
-            <div class="flex items-center justify-between pb-3 border-b-2 border-black">
+    <!-- FAST PAYMENT MODAL (Full Light Glassmorphism) -->
+    <div x-show="showPaymentModal" x-cloak class="fixed inset-0 z-50 glass-modal-backdrop flex items-center justify-center p-4">
+        <div class="glass-modal w-full max-w-lg p-6 relative" @click.outside="showPaymentModal = false">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200/70">
                 <div>
-                    <span class="neo-badge bg-yellow-300 text-black">Checkout Transaksi</span>
-                    <h3 class="text-xl font-black text-black mt-1">Pembayaran Kasir</h3>
+                    <span class="glass-badge bg-amber-400/20 text-amber-900 border-amber-400/35">Checkout Transaksi</span>
+                    <h3 class="text-xl font-extrabold text-slate-900 mt-1">Pembayaran Kasir</h3>
                 </div>
-                <button @click="showPaymentModal = false" class="text-black hover:text-rose-600 text-lg font-black">✕</button>
+                <button @click="showPaymentModal = false" class="w-8 h-8 rounded-full bg-white/70 hover:bg-rose-500/15 text-slate-500 hover:text-rose-600 text-base font-bold flex items-center justify-center transition">✕</button>
             </div>
 
             <!-- Total Amount Big -->
-            <div class="my-4 p-4 rounded-xl bg-yellow-300 border-2 border-black text-black flex items-center justify-between shadow-[3px_3px_0px_#000]">
-                <span class="text-xs font-black uppercase tracking-wider">TOTAL TAGIHAN:</span>
-                <span class="text-2xl font-black font-mono" x-text="'Rp ' + finalAmount.toLocaleString('id-ID')"></span>
+            <div class="my-4 p-4 rounded-2xl bg-gradient-to-r from-amber-400/20 to-yellow-300/25 border border-amber-400/35 text-slate-900 flex items-center justify-between backdrop-blur-md">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-900">TOTAL TAGIHAN:</span>
+                <span class="text-2xl font-extrabold font-mono text-slate-900" x-text="'Rp ' + finalAmount.toLocaleString('id-ID')"></span>
             </div>
 
             <!-- Customer Selector -->
-            <div class="mb-4 p-3 bg-zinc-50 border-2 border-black rounded-xl space-y-1.5">
+            <div class="mb-4 p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-1.5">
                 <div class="flex items-center justify-between">
-                    <label class="text-xs font-black uppercase tracking-wider text-black">Pelanggan / Peternak</label>
-                    <button type="button" @click="quickAddCustomer()" class="text-[10px] font-black text-purple-700 hover:underline uppercase">+ Pelanggan Baru</button>
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-700">Pelanggan / Peternak</label>
+                    <button type="button" @click="quickAddCustomer()" class="text-[10px] font-bold text-violet-700 hover:underline uppercase">+ Pelanggan Baru</button>
                 </div>
-                <select x-model="customerId" class="neo-input w-full py-1.5 text-xs font-bold uppercase">
+                <select x-model="customerId" class="glass-input w-full px-3 py-2 text-xs font-bold uppercase">
                     <option value="">-- PELANGGAN UMUM (NON-KASBON) --</option>
                     <template x-for="c in customers" :key="c.id">
                         <option :value="c.id" x-text="`${c.name} ${c.debt_balance > 0 ? '(Kasbon: Rp ' + Number(c.debt_balance).toLocaleString('id-ID') + ')' : ''}`"></option>
@@ -225,81 +225,81 @@
             <!-- Payment Method Tabs -->
             <div class="grid grid-cols-4 gap-2 mb-4">
                 <button type="button" @click="paymentMethod = 'cash'; paidAmount = finalAmount"
-                    :class="paymentMethod === 'cash' ? 'bg-emerald-400 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-1 text-xs font-black text-center">
+                    :class="paymentMethod === 'cash' ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400/50 shadow-md shadow-emerald-500/20' : 'bg-white/65 text-slate-700'"
+                    class="glass-btn py-2.5 px-1 text-xs font-bold text-center">
                     💵 Tunai
                 </button>
                 <button type="button" @click="paymentMethod = 'qris'; paidAmount = finalAmount"
-                    :class="paymentMethod === 'qris' ? 'bg-sky-300 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-1 text-xs font-black text-center">
+                    :class="paymentMethod === 'qris' ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white border-sky-400/50 shadow-md shadow-sky-500/20' : 'bg-white/65 text-slate-700'"
+                    class="glass-btn py-2.5 px-1 text-xs font-bold text-center">
                     📱 QRIS
                 </button>
                 <button type="button" @click="paymentMethod = 'transfer'; paidAmount = finalAmount"
-                    :class="paymentMethod === 'transfer' ? 'bg-purple-300 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-1 text-xs font-black text-center">
+                    :class="paymentMethod === 'transfer' ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white border-violet-400/50 shadow-md shadow-violet-500/20' : 'bg-white/65 text-slate-700'"
+                    class="glass-btn py-2.5 px-1 text-xs font-bold text-center">
                     🏦 Transfer
                 </button>
                 <button type="button" @click="paymentMethod = 'tempo'; paidAmount = 0"
-                    :class="paymentMethod === 'tempo' ? 'bg-rose-400 text-black shadow-[3px_3px_0px_#000]' : 'bg-zinc-100 text-black shadow-[1.5px_1.5px_0px_#000]'"
-                    class="neo-btn py-2 px-1 text-xs font-black text-center">
+                    :class="paymentMethod === 'tempo' ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white border-rose-400/50 shadow-md shadow-rose-500/20' : 'bg-white/65 text-slate-700'"
+                    class="glass-btn py-2.5 px-1 text-xs font-bold text-center">
                     📋 Kasbon
                 </button>
             </div>
 
             <!-- Tempo / Kasbon Panel -->
-            <div x-show="paymentMethod === 'tempo'" class="space-y-3 p-3.5 bg-rose-50 border-2 border-black rounded-xl">
-                <div class="text-xs font-bold text-rose-900">
-                    <span class="font-black uppercase">⚠️ Transaksi Kasbon / Tempo:</span>
+            <div x-show="paymentMethod === 'tempo'" class="space-y-3 p-3.5 bg-rose-500/10 border border-rose-400/35 rounded-2xl backdrop-blur-sm">
+                <div class="text-xs font-semibold text-rose-900">
+                    <span class="font-extrabold uppercase">⚠️ Transaksi Kasbon / Tempo:</span>
                     <p class="mt-0.5">Tagihan sebesar <strong>Rp <span x-text="finalAmount.toLocaleString('id-ID')"></span></strong> akan dicatat sebagai piutang pelanggan.</p>
                 </div>
-                <div x-show="!customerId" class="p-2 bg-rose-200 border border-black rounded text-[11px] font-black text-rose-900">
+                <div x-show="!customerId" class="p-2.5 bg-rose-500/15 border border-rose-400/40 rounded-xl text-[11px] font-bold text-rose-900">
                     PILIH NAMA PELANGGAN DI ATAS UNTUK MENGAKTIFKAN KASBON!
                 </div>
                 <div>
-                    <label class="block text-[10px] font-black uppercase mb-1">Tanggal Jatuh Tempo Pelunasan</label>
-                    <input type="date" x-model="dueDate" class="neo-input w-full text-xs font-bold">
+                    <label class="block text-[10px] font-bold uppercase text-slate-700 mb-1">Tanggal Jatuh Tempo Pelunasan</label>
+                    <input type="date" x-model="dueDate" class="glass-input w-full px-3 py-2 text-xs font-bold">
                 </div>
             </div>
 
             <!-- Cash Input & Quick Money Buttons -->
             <div x-show="paymentMethod === 'cash'" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-black text-black uppercase mb-1">Uang Diterima dari Pembeli (Rp)</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Uang Diterima dari Pembeli (Rp)</label>
                     <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-sm font-black text-black">Rp</span>
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-sm font-bold text-slate-500">Rp</span>
                         <input type="number" x-model.number="paidAmount" min="0" step="500" x-ref="cashInput"
-                            class="neo-input pl-10 pr-4 py-2.5 text-xl font-black font-mono">
+                            class="glass-input pl-11 pr-4 py-2.5 text-xl font-extrabold font-mono">
                     </div>
                 </div>
 
                 <!-- Quick Money Pills -->
                 <div class="flex flex-wrap gap-2">
-                    <button type="button" @click="paidAmount = finalAmount" class="neo-btn px-2.5 py-1 bg-yellow-200 text-black text-xs font-black font-mono">Uang Pas</button>
-                    <button type="button" @click="paidAmount = 20000" class="neo-btn px-2.5 py-1 bg-zinc-100 text-black text-xs font-black font-mono">20.000</button>
-                    <button type="button" @click="paidAmount = 50000" class="neo-btn px-2.5 py-1 bg-zinc-100 text-black text-xs font-black font-mono">50.000</button>
-                    <button type="button" @click="paidAmount = 100000" class="neo-btn px-2.5 py-1 bg-zinc-100 text-black text-xs font-black font-mono">100.000</button>
-                    <button type="button" @click="paidAmount = 200000" class="neo-btn px-2.5 py-1 bg-zinc-100 text-black text-xs font-black font-mono">200.000</button>
-                    <button type="button" @click="paidAmount = 500000" class="neo-btn px-2.5 py-1 bg-zinc-100 text-black text-xs font-black font-mono">500.000</button>
+                    <button type="button" @click="paidAmount = finalAmount" class="glass-btn px-3 py-1.5 bg-amber-400/25 text-amber-900 border-amber-400/40 text-xs font-bold font-mono">Uang Pas</button>
+                    <button type="button" @click="paidAmount = 20000" class="glass-btn px-3 py-1.5 bg-white/70 text-slate-700 text-xs font-bold font-mono">20.000</button>
+                    <button type="button" @click="paidAmount = 50000" class="glass-btn px-3 py-1.5 bg-white/70 text-slate-700 text-xs font-bold font-mono">50.000</button>
+                    <button type="button" @click="paidAmount = 100000" class="glass-btn px-3 py-1.5 bg-white/70 text-slate-700 text-xs font-bold font-mono">100.000</button>
+                    <button type="button" @click="paidAmount = 200000" class="glass-btn px-3 py-1.5 bg-white/70 text-slate-700 text-xs font-bold font-mono">200.000</button>
+                    <button type="button" @click="paidAmount = 500000" class="glass-btn px-3 py-1.5 bg-white/70 text-slate-700 text-xs font-bold font-mono">500.000</button>
                 </div>
 
                 <!-- Change Calculation -->
-                <div class="p-3.5 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000]"
-                    :class="changeAmount >= 0 ? 'bg-emerald-200 text-black' : 'bg-rose-200 text-black'">
+                <div class="p-3.5 rounded-2xl border backdrop-blur-sm"
+                    :class="changeAmount >= 0 ? 'bg-emerald-500/15 border-emerald-400/35 text-emerald-950' : 'bg-rose-500/15 border-rose-400/35 text-rose-950'">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-black uppercase tracking-wider" x-text="changeAmount >= 0 ? 'Uang Kembalian:' : 'Uang Kurang:'"></span>
-                        <span class="text-xl font-black font-mono" x-text="'Rp ' + Math.abs(changeAmount).toLocaleString('id-ID')"></span>
+                        <span class="text-xs font-bold uppercase tracking-wider" x-text="changeAmount >= 0 ? 'Uang Kembalian:' : 'Uang Kurang:'"></span>
+                        <span class="text-xl font-extrabold font-mono" x-text="'Rp ' + Math.abs(changeAmount).toLocaleString('id-ID')"></span>
                     </div>
                 </div>
             </div>
 
             <!-- Submit Final Checkout -->
             <div class="mt-6 flex items-center justify-end gap-2.5">
-                <button type="button" @click="showPaymentModal = false" class="neo-btn px-4 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-black font-bold text-xs">
+                <button type="button" @click="showPaymentModal = false" class="glass-btn px-4 py-2.5 bg-white/75 hover:bg-white text-slate-700 font-bold text-xs">
                     Batal
                 </button>
                 <button type="button" @click="submitCheckout()" :disabled="isProcessing || (paymentMethod === 'cash' && changeAmount < 0) || (paymentMethod === 'tempo' && !customerId)"
-                    class="neo-btn px-6 py-2.5 bg-emerald-400 hover:bg-emerald-300 disabled:opacity-50 text-black font-black text-xs uppercase tracking-wider shadow-[3px_3px_0px_#000] flex items-center gap-1.5">
-                    <span x-show="!isProcessing">Selesaikan & Cetak Struk 🖨</span>
+                    class="glass-btn px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white border-emerald-400/50 font-bold text-xs uppercase tracking-wider shadow-md shadow-emerald-500/20 flex items-center gap-1.5">
+                    <span x-show="!isProcessing">Selesaikan &amp; Cetak Struk 🖨</span>
                     <span x-show="isProcessing">Memproses Transaksi...</span>
                 </button>
             </div>
@@ -307,34 +307,34 @@
     </div>
 
     <!-- RECALL BILL MODAL -->
-    <div x-show="showHoldModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white border-3 border-black rounded-2xl w-full max-w-md p-6 shadow-[8px_8px_0px_#000] relative" @click.outside="showHoldModal = false">
-            <div class="flex items-center justify-between pb-3 border-b-2 border-black">
-                <h3 class="text-base font-black text-black uppercase">Antrean Bill Tersimpan (Hold)</h3>
-                <button @click="showHoldModal = false" class="text-black hover:text-rose-600 text-lg font-black">✕</button>
+    <div x-show="showHoldModal" x-cloak class="fixed inset-0 z-50 glass-modal-backdrop flex items-center justify-center p-4">
+        <div class="glass-modal w-full max-w-md p-6 relative" @click.outside="showHoldModal = false">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200/70">
+                <h3 class="text-base font-extrabold text-slate-900 uppercase">Antrean Bill Tersimpan (Hold)</h3>
+                <button @click="showHoldModal = false" class="w-8 h-8 rounded-full bg-white/70 hover:bg-rose-500/15 text-slate-500 hover:text-rose-600 text-base font-bold flex items-center justify-center transition">✕</button>
             </div>
 
-            <div class="divide-y-2 divide-black/10 my-3 max-h-72 overflow-y-auto">
+            <div class="divide-y divide-slate-200/60 my-3 max-h-72 overflow-y-auto">
                 <template x-for="bill in heldBills" :key="bill.id">
                     <div class="py-3 flex items-center justify-between">
                         <div>
-                            <span class="text-xs font-black font-mono text-black" x-text="bill.invoice_number"></span>
-                            <p class="text-[10px] text-zinc-500 font-bold" x-text="bill.created_at + ' (' + bill.details.length + ' item)'"></p>
-                            <span class="text-xs font-black font-mono text-emerald-700" x-text="'Rp ' + Number(bill.final_amount).toLocaleString('id-ID')"></span>
+                            <span class="text-xs font-extrabold font-mono text-slate-900" x-text="bill.invoice_number"></span>
+                            <p class="text-[10px] text-slate-500 font-semibold" x-text="bill.created_at + ' (' + bill.details.length + ' item)'"></p>
+                            <span class="text-xs font-extrabold font-mono text-emerald-700" x-text="'Rp ' + Number(bill.final_amount).toLocaleString('id-ID')"></span>
                         </div>
-                        <button type="button" @click="recallBill(bill.id)" class="neo-btn px-3 py-1.5 bg-emerald-400 hover:bg-emerald-300 text-black font-black text-xs shadow-[2px_2px_0px_#000]">
+                        <button type="button" @click="recallBill(bill.id)" class="glass-btn px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white border-emerald-400/50 font-bold text-xs shadow-sm shadow-emerald-500/20">
                             Ambil Kembali
                         </button>
                     </div>
                 </template>
 
-                <div x-show="heldBills.length === 0" class="py-8 text-center text-zinc-500 font-bold text-xs">
+                <div x-show="heldBills.length === 0" class="py-8 text-center text-slate-500 font-semibold text-xs">
                     Tidak ada antrean belanja yang disimpan saat ini.
                 </div>
             </div>
 
             <div class="pt-2 text-right">
-                <button @click="showHoldModal = false" class="neo-btn px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-black font-bold text-xs">
+                <button @click="showHoldModal = false" class="glass-btn px-4 py-2 bg-white/75 hover:bg-white text-slate-700 font-bold text-xs">
                     Tutup
                 </button>
             </div>
@@ -342,17 +342,17 @@
     </div>
 
     <!-- QUICK PETTY CASH / EXPENSE MODAL -->
-    <div x-show="showExpenseModal" x-cloak class="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white border-3 border-black rounded-2xl w-full max-w-md p-6 shadow-[8px_8px_0px_#000] relative" @click.outside="showExpenseModal = false">
-            <div class="flex items-center justify-between pb-3 border-b-2 border-black">
-                <h3 class="text-base font-black text-black uppercase">💸 Catat Kas Keluar Shift Ini</h3>
-                <button @click="showExpenseModal = false" class="text-black hover:text-rose-600 text-lg font-black">✕</button>
+    <div x-show="showExpenseModal" x-cloak class="fixed inset-0 z-50 glass-modal-backdrop flex items-center justify-center p-4">
+        <div class="glass-modal w-full max-w-md p-6 relative" @click.outside="showExpenseModal = false">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200/70">
+                <h3 class="text-base font-extrabold text-slate-900 uppercase">💸 Catat Kas Keluar Shift Ini</h3>
+                <button @click="showExpenseModal = false" class="w-8 h-8 rounded-full bg-white/70 hover:bg-rose-500/15 text-slate-500 hover:text-rose-600 text-base font-bold flex items-center justify-center transition">✕</button>
             </div>
 
             <form @submit.prevent="submitExpense()" class="space-y-4 my-4">
                 <div>
-                    <label class="block text-xs font-black uppercase mb-1">Kategori Biaya *</label>
-                    <select x-model="expenseCategory" required class="neo-input w-full text-xs font-bold uppercase">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Kategori Biaya *</label>
+                    <select x-model="expenseCategory" required class="glass-input w-full px-3 py-2 text-xs font-bold uppercase">
                         <option value="Plastik & Karung Eceran">Plastik & Karung Eceran</option>
                         <option value="Upah Kuli Panggul Pakan">Upah Kuli Panggul Pakan</option>
                         <option value="Operasional Toko">Operasional Toko</option>
@@ -362,20 +362,20 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black uppercase mb-1">Nominal Kas Keluar (Rp) *</label>
-                    <input type="number" x-model.number="expenseAmount" min="1" required class="neo-input w-full font-black text-base" placeholder="25000">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nominal Kas Keluar (Rp) *</label>
+                    <input type="number" x-model.number="expenseAmount" min="1" required class="glass-input w-full px-3.5 py-2.5 font-extrabold text-base" placeholder="25000">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black uppercase mb-1">Keterangan / Keperluan</label>
-                    <input type="text" x-model="expenseDescription" placeholder="Contoh: Beli lakban & kresek 1kg" class="neo-input w-full text-xs font-bold">
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Keterangan / Keperluan</label>
+                    <input type="text" x-model="expenseDescription" placeholder="Contoh: Beli lakban & kresek 1kg" class="glass-input w-full px-3.5 py-2 text-xs font-semibold">
                 </div>
 
                 <div class="pt-2 flex justify-end gap-2">
-                    <button type="button" @click="showExpenseModal = false" class="neo-btn px-4 py-2 bg-zinc-100 text-black font-bold text-xs">
+                    <button type="button" @click="showExpenseModal = false" class="glass-btn px-4 py-2 bg-white/75 text-slate-700 font-bold text-xs">
                         Batal
                     </button>
-                    <button type="submit" :disabled="isExpenseSaving" class="neo-btn px-6 py-2 bg-rose-400 text-black font-black text-xs uppercase">
+                    <button type="submit" :disabled="isExpenseSaving" class="glass-btn px-6 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white border-rose-400/50 font-bold text-xs uppercase shadow-md shadow-rose-500/20">
                         <span x-show="!isExpenseSaving">Simpan Pengeluaran</span>
                         <span x-show="isExpenseSaving">Menyimpan...</span>
                     </button>
